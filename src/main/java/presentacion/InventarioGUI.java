@@ -25,10 +25,12 @@ public class InventarioGUI extends JFrame {
     private static Container contenedor;
     private static CardLayout card = new CardLayout();
     private InformacionPC infoPC;
-    private MenuEspecificaciones especificaciones;
+    private MenuInventario menuInventario;
 
     public static void main(String[] args) throws IOException {
         new InventarioGUI();
+        InformacionPC a=new InformacionPC();
+        a.buscarInformacion(1, true);
 
     }
 
@@ -42,11 +44,11 @@ public class InventarioGUI extends JFrame {
         infoPC = new InformacionPC();
         setTitle("Inventario Computadores Constructora Capital");
         contenedor = getContentPane();
-        especificaciones = new MenuEspecificaciones(this);
-        card.addLayoutComponent(especificaciones, "especificaciones");
-        contenedor.add(especificaciones);
+        menuInventario = new MenuInventario();
+        card.addLayoutComponent(menuInventario, "menuInventario");
+        contenedor.add(menuInventario);
         contenedor.setLayout(card);
-        card.show(contenedor, "especificaciones");
+        card.show(contenedor, "menuInventario");
         setSize(790, 490);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screen.width - getSize().width) / 2, (screen.height - getSize().height) / 2);
