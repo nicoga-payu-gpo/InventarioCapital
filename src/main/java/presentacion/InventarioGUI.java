@@ -49,7 +49,7 @@ public class InventarioGUI extends JFrame {
         contenedor.add(menuInventario);
         contenedor.setLayout(card);
         card.show(contenedor, "menuInventario");
-        setSize(790, 490);
+        setSize(905, 596);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screen.width - getSize().width) / 2, (screen.height - getSize().height) / 2);
 
