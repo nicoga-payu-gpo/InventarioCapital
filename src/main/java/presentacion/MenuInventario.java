@@ -493,7 +493,7 @@ public class MenuInventario extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Agregar nuevo computador");
 
-        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\ngarcia\\Documents\\NetBeansProjects\\SistemaInventarios\\res\\logo-trans.png")); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo-trans.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
