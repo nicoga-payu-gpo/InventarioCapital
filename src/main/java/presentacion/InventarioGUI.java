@@ -5,6 +5,7 @@
  */
 package presentacion;
 
+import aplicacion.ExcepcionInventario;
 import aplicacion.InformacionPC;
 import java.awt.CardLayout;
 import java.awt.Container;
@@ -13,6 +14,8 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -30,7 +33,11 @@ public class InventarioGUI extends JFrame {
     public static void main(String[] args) throws IOException {
         new InventarioGUI();
         InformacionPC a=new InformacionPC();
-        a.buscarInformacion(1, true);
+        try {
+            a.buscarInformacion(1, true);
+        } catch (ExcepcionInventario ex) {
+            Logger.getLogger(InventarioGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
