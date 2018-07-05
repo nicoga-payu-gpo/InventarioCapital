@@ -14,13 +14,16 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Data;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.CellData;
+import com.google.api.services.sheets.v4.model.CellFormat;
 import com.google.api.services.sheets.v4.model.ExtendedValue;
 import com.google.api.services.sheets.v4.model.GridCoordinate;
+import com.google.api.services.sheets.v4.model.NumberFormat;
 import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.RowData;
 import com.google.api.services.sheets.v4.model.UpdateCellsRequest;
@@ -112,11 +115,12 @@ public class InformacionPC {
     private String distribucionAutocad;
     private String versionAutocad;
     private String licenciaAutocad;
-    private String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
-        serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
-        idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad};
+    private String licenciaOtro;
 
-    ;
+    String[] titulos = {"N FACTURA", "TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "AREA", "MARCA", "MODELO", "SERIAL", "PLACA",
+        "USER ADMIN", "GPO", "USER DOM", "P.MARCA", "P.MODELO", "P.SERIAL", "IP", "PROCESADOR", "RAM", "MOTHERBOARD", "TJ GRAFICA", "DISCO DURO", "UNIDAD CD/DVD",
+        "ANTIVIRUS", "DISTRIBUCION OFFICE", "VERSIÓN OFFICE", "LICENCIA OFFICE", "ACTIVO", "instalada", "DISTRUBUCION WINDOWS", "ID PRODUCTO", "LICENCIA WINDOWS", "LICENCIA (BIOS)",
+        "COA", "DISTRIBUCION PROJECT", "VERSIÓN PROJECT", "LICENCIA PROJECT", "DISTRIBUCION AUTOCAD", "VERSIÓN AUTOCAD", "LICENCIA AUTOCAD", "LICENCIA OTRO"};
 
     public InformacionPC() {
 
@@ -156,19 +160,14 @@ public class InformacionPC {
                 .get(spreadsheetId, "Oficina!B4:AW4")
                 .execute();
         filaTitulos = respuesta1.getValues();
-
-        for (List fila : filaTitulos) {
-            int columna = 0;
-            while (fila.size() > columna) {
-                System.out.println(fila.get(columna));
-                columna += 1;
-            }
-
-        }
         guardarFecha(service);
-        guardarDato("N FACTURA", numeroFactura, service);
-        guardarDato("TIPO EQUIPO", tipoDeEquipo, service);
-
+        String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
+            serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
+            idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
+        /*for (int i = 0; i < titulos.length; i++) {
+            System.out.println(datosPC[i]);
+            guardarDato(titulos[i], datosPC[i], service);
+        }*/
     }
 
     private void guardarFecha(Sheets s) throws IOException {
@@ -177,9 +176,12 @@ public class InformacionPC {
         List<CellData> valores = new ArrayList<>();
         Date fecha = new Date();
         String fe = new SimpleDateFormat("dd-MM-yyyy").format(fecha);
-        valores.add(new CellData()
-                .setUserEnteredValue(new ExtendedValue()
-                        .setStringValue(fe.substring(1))));
+        System.out.println(fe);
+        CellData cell=new CellData();
+        cell.setFormattedValue("DATE");
+        cell.setUserEnteredValue(new ExtendedValue().setStringValue(fe));
+        cell.setUserEnteredFormat(new CellFormat().setNumberFormat(new NumberFormat().setType("DATE")));
+        valores.add(cell);
         requests.add(new Request()
                 .setUpdateCells(new UpdateCellsRequest()
                         .setStart(new GridCoordinate()
@@ -193,35 +195,32 @@ public class InformacionPC {
                 .setRequests(requests);
         s.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
                 .execute();
-        ;
+        
+        
+        
 
     }
 
     private void guardarDato(String c, String p, Sheets s) throws IOException {
         List<Request> requests = new ArrayList<>();
-
         List<CellData> valores = new ArrayList<>();
-
         valores.add(new CellData()
                 .setUserEnteredValue(new ExtendedValue()
                         .setStringValue(p)));
-        
         int columna = 0;
         for (List fila : filaTitulos) {
-            int cont = -1;
+            int cont = 0;
             boolean salida = false;
-            
+
             while (fila.size() > cont && !salida) {
-                cont++;
+
                 if (fila.get(cont).equals(c)) {
                     salida = true;
-                    columna = cont+1;
+                    columna = cont + 1;
                 }
-                
+                cont++;
             }
         }
-        
-
         requests.add(new Request()
                 .setUpdateCells(new UpdateCellsRequest()
                         .setStart(new GridCoordinate()
@@ -262,13 +261,25 @@ public class InformacionPC {
         Dominio = buscarDominioPC();
         if (tipoPC != 1 || multiplesPantallas) {
             for (String s : buscarMarcaPantallasPC()) {
-                marcaPantalla = marcaPantalla + "\n" + s;
+                if (marcaPantalla==null ) {
+                    marcaPantalla = s;
+                } else {
+                    marcaPantalla = marcaPantalla + "\n" + s;
+                }
             }
             for (String s : buscarModeloPantallasPC()) {
-                modeloPantalla = modeloPantalla + "\n" + s;
+                if ( modeloPantalla == null) {
+                    modeloPantalla = s;
+                } else {
+                    modeloPantalla = modeloPantalla + "\n" + s;
+                }
             }
             for (String s : buscarSerialPantallasPC()) {
-                serialPantalla = serialPantalla + "\n" + s;
+                if ( serialPantalla == null) {
+                    serialPantalla = s;
+                } else {
+                    serialPantalla = serialPantalla + "\n" + s;
+                }
             }
         } else {
             marcaPantalla = "N/A";
@@ -289,6 +300,9 @@ public class InformacionPC {
         antivirus = "N/A";
         distribucionOffice = "N/A";
         versionOffice = "N/A";
+        licenciaOffice = "N/A";
+        officeActivo = "N/A";
+        officeInstalado = "N/A";
         distribucionWindows = "N/A";
         idWindows = "N/A";
         licenciaWindows = "N/A";
@@ -300,6 +314,7 @@ public class InformacionPC {
         distribucionAutocad = "N/A";
         versionAutocad = "N/A";
         licenciaAutocad = "N/A";
+        licenciaOtro = "N/A";
         try {
             guardarDatos();
         } catch (IOException ex) {
@@ -355,7 +370,6 @@ public class InformacionPC {
                     } else {
                         respuesta.add(line.trim());
                     }
-
                 }
             }
         } catch (IOException | InterruptedException ex) {
@@ -402,7 +416,6 @@ public class InformacionPC {
         } else {
             return grupo;
         }
-
     }
 
     private String buscarDominioPC() {
