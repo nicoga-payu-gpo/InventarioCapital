@@ -175,10 +175,9 @@ public class InformacionPC {
 
         List<CellData> valores = new ArrayList<>();
         Date fecha = new Date();
-        String fe = new SimpleDateFormat("dd-MM-yyyy").format(fecha);
+        String fe = new SimpleDateFormat("dd/MM/yyyy").format(fecha);
         System.out.println(fe);
         CellData cell=new CellData();
-        cell.setFormattedValue("DATE");
         cell.setUserEnteredValue(new ExtendedValue().setStringValue(fe));
         cell.setUserEnteredFormat(new CellFormat().setNumberFormat(new NumberFormat().setType("DATE")));
         valores.add(cell);
