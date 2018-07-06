@@ -28,16 +28,15 @@ public class InventarioGUI extends JFrame {
     private static Container contenedor;
     private static CardLayout card = new CardLayout();
     private InformacionPC infoPC;
-    private MenuInventario menuInventario;
+    private MenuInventario menuInventarioOficina;
 
     public static void main(String[] args) throws IOException {
         new InventarioGUI();
-        InformacionPC a=new InformacionPC();
-        try {
+        /*try {
             a.buscarInformacion(1, true);
         } catch (ExcepcionInventario ex) {
             Logger.getLogger(InventarioGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
 
     }
 
@@ -48,15 +47,20 @@ public class InventarioGUI extends JFrame {
     }
 
     private void prepareElementos() {
-        infoPC = new InformacionPC();
+        try {
+            infoPC = new InformacionPC(0);
+        } catch (ExcepcionInventario ex) {
+            new JOptionPane(ex.getMessage()).setVisible(true);
+            System.out.println(ex.getMessage());
+        }
         setTitle("Inventario Computadores Constructora Capital");
         contenedor = getContentPane();
-        menuInventario = new MenuInventario();
-        card.addLayoutComponent(menuInventario, "menuInventario");
-        contenedor.add(menuInventario);
+        menuInventarioOficina = new MenuInventario(this);
+        card.addLayoutComponent(menuInventarioOficina, "menuInventario");
+        contenedor.add(menuInventarioOficina);
         contenedor.setLayout(card);
         card.show(contenedor, "menuInventario");
-        setSize(905, 596);
+        setSize(925, 680);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screen.width - getSize().width) / 2, (screen.height - getSize().height) / 2);
 
@@ -81,5 +85,9 @@ public class InventarioGUI extends JFrame {
             dispose();
             System.exit(0);
         }
+    }
+
+    public InformacionPC getInfoPC() {
+        return infoPC;
     }
 }
