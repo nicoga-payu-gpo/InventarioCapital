@@ -29,6 +29,8 @@ public class InventarioGUI extends JFrame {
     private static CardLayout card = new CardLayout();
     private InformacionPC infoPC;
     private MenuInventario menuInventarioOficina;
+    private MenuPrincipal menuPrincipal;
+    private MenuConfirmacionDatosOficina menuConfirmacionDatosOficina;
 
     public static void main(String[] args) throws IOException {
         new InventarioGUI();
@@ -55,12 +57,18 @@ public class InventarioGUI extends JFrame {
         }
         setTitle("Inventario Computadores Constructora Capital");
         contenedor = getContentPane();
+        menuConfirmacionDatosOficina = new MenuConfirmacionDatosOficina(this);
+        card.addLayoutComponent(menuConfirmacionDatosOficina, "menuConfirmacionDatosOficina");
+        contenedor.add(menuConfirmacionDatosOficina);
+        menuPrincipal = new MenuPrincipal(this);
+        card.addLayoutComponent(menuPrincipal, "menuPrincipal");
+        contenedor.add(menuPrincipal);
         menuInventarioOficina = new MenuInventario(this);
-        card.addLayoutComponent(menuInventarioOficina, "menuInventario");
+        card.addLayoutComponent(menuInventarioOficina, "menuInventarioOficina");
         contenedor.add(menuInventarioOficina);
         contenedor.setLayout(card);
-        card.show(contenedor, "menuInventario");
-        setSize(925, 680);
+        card.show(contenedor, "menuPrincipal");
+        setSize(928, 680);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screen.width - getSize().width) / 2, (screen.height - getSize().height) / 2);
 
@@ -89,5 +97,21 @@ public class InventarioGUI extends JFrame {
 
     public InformacionPC getInfoPC() {
         return infoPC;
+    }
+    
+    public void mostrarMenuPrincipal(){
+        setSize(928, 680);
+        card.show(contenedor, "menuPrincipal");
+    }
+    
+    public void mostrarMenuInventarioOficina(){
+        setSize(928, 680);
+        card.show(contenedor, "menuInventarioOficina");
+    }
+    
+    public void motrarMenuConfirmacionDatosOficina(){
+        setSize(925, 550);
+        menuConfirmacionDatosOficina.actualizarCampos();
+        card.show(contenedor, "menuConfirmacionDatosOficina");
     }
 }

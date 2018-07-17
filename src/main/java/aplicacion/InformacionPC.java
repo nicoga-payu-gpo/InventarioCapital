@@ -252,6 +252,7 @@ public class InformacionPC {
     }
 
     private void crearLista(ArrayList<String> a, List<List<Object>> l) {
+        a.add("N/A");
         for (int columna = 2; columna < l.size(); columna++) {
             if(! l.get(columna).isEmpty()){
             a.add((String) l.get(columna).get(0));
@@ -331,30 +332,30 @@ public class InformacionPC {
         lugar = "N/A";
         area = "N/A";
         placaPC = "N/A";
-        marcaPC = buscarMarcaPC();
-        modeloPC = buscarModeloPC();
-        serialPC = buscarSerialPC();
-        userAdmin = buscarUsuarioPC();
-        Grupo = buscarGrupoDeTrabajoPC();
-        Dominio = buscarDominioPC();
+        marcaPC = buscarMarcaPC().toUpperCase();
+        modeloPC = buscarModeloPC().toUpperCase();
+        serialPC = buscarSerialPC().toUpperCase();
+        userAdmin = buscarUsuarioPC().toUpperCase();
+        Grupo = buscarGrupoDeTrabajoPC().toUpperCase();
+        Dominio = buscarDominioPC().toUpperCase();
         if (tipoPC != 1 || multiplesPantallas) {
             for (String s : buscarMarcaPantallasPC()) {
                 if (marcaPantalla == null) {
-                    marcaPantalla = s;
+                    marcaPantalla = s.toUpperCase();
                 } else {
                     marcaPantalla = marcaPantalla + "\n" + s;
                 }
             }
             for (String s : buscarModeloPantallasPC()) {
                 if (modeloPantalla == null) {
-                    modeloPantalla = s;
+                    modeloPantalla = s.toUpperCase();
                 } else {
                     modeloPantalla = modeloPantalla + "\n" + s;
                 }
             }
             for (String s : buscarSerialPantallasPC()) {
                 if (serialPantalla == null) {
-                    serialPantalla = s;
+                    serialPantalla = s.toUpperCase();
                 } else {
                     serialPantalla = serialPantalla + "\n" + s;
                 }
@@ -369,12 +370,13 @@ public class InformacionPC {
         } catch (UnknownHostException ex) {
             throw new ExcepcionInventario("Error al obtener ip del PC.");
         }
-        procesador = buscarProcesadorPC();
-        ram = buscarMemoriaRamPC();
-        placaBase = buscarPlacaBasePC();
-        tarjetaGrafica = buscarTarjetaGraficaPC();
-        discoDuro = buscarDiscoDuroPC();
-        unidadCD = buscarUnidadCDPC();
+        procesador = buscarProcesadorPC().toUpperCase();
+        ram = buscarMemoriaRamPC().toUpperCase();
+        placaBase = buscarPlacaBasePC().toUpperCase();
+        tarjetaGrafica = buscarTarjetaGraficaPC().toUpperCase();
+        discoDuro = buscarDiscoDuroPC().toUpperCase();
+        unidadCD = buscarUnidadCDPC().toUpperCase();
+      
         antivirus = "N/A";
         distribucionOffice = "N/A";
         versionOffice = "N/A";
@@ -393,17 +395,11 @@ public class InformacionPC {
         versionAutocad = "N/A";
         licenciaAutocad = "N/A";
         licenciaOtro = "N/A";
-        try {
-            guardarDatosOficina();
-        } catch (IOException ex) {
-            Logger.getLogger(InformacionPC.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (GeneralSecurityException ex) {
-            Logger.getLogger(InformacionPC.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
 
     }
 
-    private ArrayList<String> ejecutarComandoWMIC(String[] c) {
+    private ArrayList<String> ejecutarComandoWMIC(String[] c) throws ExcepcionInventario {
         BufferedReader reader = null;
         ArrayList<String> respuesta = new ArrayList<String>();
         try {
@@ -419,18 +415,18 @@ public class InformacionPC {
 
             }
         } catch (IOException ex) {
-            Logger.getLogger(InformacionPC.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ExcepcionInventario("Error al ejecutar comando mediante WMIC.");
         } finally {
             try {
                 reader.close();
             } catch (IOException ex) {
-                Logger.getLogger(InformacionPC.class.getName()).log(Level.SEVERE, null, ex);
+                throw new ExcepcionInventario("Error al cerrar el stream de lectura.");
             }
         }
         return respuesta;
     }
 
-    private ArrayList<String> ejecutarComandoDirectX(String especificacion, boolean recortar) {
+    private ArrayList<String> ejecutarComandoDirectX(String especificacion, boolean recortar) throws ExcepcionInventario {
         ArrayList<String> respuesta = new ArrayList<String>();
         try {
             if (filePath == null) {
@@ -451,7 +447,7 @@ public class InformacionPC {
                 }
             }
         } catch (IOException | InterruptedException ex) {
-            ex.printStackTrace();
+           throw new ExcepcionInventario("Error al ejecutar comando DirectX.");
         }
         return respuesta;
     }
@@ -460,33 +456,33 @@ public class InformacionPC {
         return InetAddress.getLocalHost().getHostAddress();
     }
 
-    private String buscarNombrePC() {
+    private String buscarNombrePC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "WMIC COMPUTERSYSTEM GET Name"};
         return ejecutarComandoWMIC(comando).get(2);
 
     }
 
-    private String buscarMarcaPC() {
+    private String buscarMarcaPC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "WMIC csproduct GET Vendor"};
         return ejecutarComandoWMIC(comando).get(2);
     }
 
-    private String buscarModeloPC() {
+    private String buscarModeloPC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "WMIC CSPRODUCT GET Name"};
         return ejecutarComandoWMIC(comando).get(2);
     }
 
-    private String buscarSerialPC() {
+    private String buscarSerialPC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "WMIC BIOS GET SerialNumber"};
         return ejecutarComandoWMIC(comando).get(2);
     }
 
-    private String buscarUsuarioPC() {
+    private String buscarUsuarioPC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "WMIC COMPUTERSYSTEM GET UserName"};
         return ejecutarComandoWMIC(comando).get(2);
     }
 
-    private String buscarGrupoDeTrabajoPC() {
+    private String buscarGrupoDeTrabajoPC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "WMIC COMPUTERSYSTEM GET Workgroup"};
         String grupo = ejecutarComandoWMIC(comando).get(2);
         if (grupo.equals("           ")) {
@@ -496,7 +492,7 @@ public class InformacionPC {
         }
     }
 
-    private String buscarDominioPC() {
+    private String buscarDominioPC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "WMIC COMPUTERSYSTEM GET Domain"};
         String dominio = ejecutarComandoWMIC(comando).get(2);
         if (dominio.trim().equals("")) {
@@ -506,24 +502,24 @@ public class InformacionPC {
         }
     }
 
-    private ArrayList<String> buscarMarcaPantallasPC() {
+    private ArrayList<String> buscarMarcaPantallasPC() throws ExcepcionInventario {
         return ejecutarComandoDirectX("Monitor Name: ", true);
 
     }
 
-    private ArrayList<String> buscarModeloPantallasPC() {
+    private ArrayList<String> buscarModeloPantallasPC() throws ExcepcionInventario {
         return ejecutarComandoDirectX("Monitor Model: ", true);
     }
 
-    private ArrayList<String> buscarSerialPantallasPC() {
+    private ArrayList<String> buscarSerialPantallasPC() throws ExcepcionInventario {
         return ejecutarComandoDirectX("Monitor Id: ", true);
     }
 
-    private String buscarProcesadorPC() {
+    private String buscarProcesadorPC() throws ExcepcionInventario {
         return ejecutarComandoDirectX("Processor: ", true).get(0);
     }
 
-    private String buscarMemoriaRamPC() {
+    private String buscarMemoriaRamPC() throws ExcepcionInventario {
         String[] comandoCapacidad = {"CMD", "/C", "WMIC MemoryChip GET Capacity"};
         String[] comandoVelocidad = {"CMD", "/C", "WMIC MemoryChip GET Speed"};
         String[] comandoTipo = {"CMD", "/C", "WMIC MemoryChip GET MemoryType"};
@@ -543,12 +539,12 @@ public class InformacionPC {
 
     }
 
-    private String buscarPlacaBasePC() {
+    private String buscarPlacaBasePC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "wmic baseboard get product,Manufacturer,version,serialnumber"};
         return ejecutarComandoWMIC(comando).get(2);
     }
 
-    private String buscarTarjetaGraficaPC() {
+    private String buscarTarjetaGraficaPC() throws ExcepcionInventario {
         String tarjeta;
         try {
             tarjeta = ejecutarComandoDirectX("Name: NVIDIA", false).get(0).substring(6);
@@ -558,13 +554,13 @@ public class InformacionPC {
         return tarjeta;
     }
 
-    private String buscarDiscoDuroPC() {
+    private String buscarDiscoDuroPC() throws ExcepcionInventario {
         String[] comandoNombre = {"CMD", "/C", "wmic diskdrive get caption"};
         String[] comandoTamaño = {"CMD", "/C", "wmic diskdrive get size"};
         return Long.toString(Long.parseLong(ejecutarComandoWMIC(comandoTamaño).get(2).trim()) / 1073741824) + " GB " + ejecutarComandoWMIC(comandoNombre).get(2);
     }
 
-    private String buscarUnidadCDPC() {
+    private String buscarUnidadCDPC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "wmic cdrom get Name"};
         return ejecutarComandoWMIC(comando).get(2);
     }
@@ -779,5 +775,73 @@ public class InformacionPC {
 
     public ArrayList<String> getListaLicenciasAutocad() {
         return listaLicenciasAutocad;
+    }
+
+    public String getNombrePC() {
+        return nombrePC;
+    }
+
+    public String getPlacaPC() {
+        return placaPC;
+    }
+
+    public String getMarcaPC() {
+        return marcaPC;
+    }
+
+    public String getModeloPC() {
+        return modeloPC;
+    }
+
+    public String getSerialPC() {
+        return serialPC;
+    }
+
+    public String getUserAdmin() {
+        return userAdmin;
+    }
+
+    public String getGrupo() {
+        return Grupo;
+    }
+
+    public String getDominio() {
+        return Dominio;
+    }
+
+    public String getMarcaPantalla() {
+        return marcaPantalla;
+    }
+
+    public String getSerialPantalla() {
+        return serialPantalla;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getProcesador() {
+        return procesador;
+    }
+
+    public String getRam() {
+        return ram;
+    }
+
+    public String getPlacaBase() {
+        return placaBase;
+    }
+
+    public String getTarjetaGrafica() {
+        return tarjetaGrafica;
+    }
+
+    public String getDiscoDuro() {
+        return discoDuro;
+    }
+
+    public String getUnidadCD() {
+        return unidadCD;
     }
 }
