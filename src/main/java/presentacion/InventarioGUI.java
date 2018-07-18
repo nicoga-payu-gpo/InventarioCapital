@@ -34,11 +34,7 @@ public class InventarioGUI extends JFrame {
 
     public static void main(String[] args) throws IOException {
         new InventarioGUI();
-        /*try {
-            a.buscarInformacion(1, true);
-        } catch (ExcepcionInventario ex) {
-            Logger.getLogger(InventarioGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+      
 
     }
 

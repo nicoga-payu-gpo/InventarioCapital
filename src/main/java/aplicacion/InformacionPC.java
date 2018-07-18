@@ -132,6 +132,7 @@ public class InformacionPC {
     private ArrayList<String> listaVersionAutocad = new ArrayList<String>();
     private ArrayList<String> listaDistribucionAutocad = new ArrayList<String>();
     private ArrayList<String> listaLicenciasAutocad = new ArrayList<String>();
+    private  ArrayList<String> seriales=new ArrayList<String>();
     private String[] abc = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"};
 
     String[] titulos = {"N FACTURA", "TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "AREA", "MARCA", "MODELO", "SERIAL", "PLACA",
@@ -179,7 +180,37 @@ public class InformacionPC {
         licenciaAutocad = "N/A";
         licenciaOtro = "N/A";
     }
-
+    
+    public void buscarPCEnInventarioOficina() throws ExcepcionInventario{
+        try {
+            String s=buscarSerialPC();
+            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+            Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+            ValueRange respuesta;
+            respuesta = service.spreadsheets().values()
+                    .get(spreadsheetId, "Oficina!B5:C")
+                    .execute();
+            filaDocumento = respuesta.getValues().size() + 4;
+            ValueRange respuesta1 = service.spreadsheets().values()
+                    .get(spreadsheetId, "Oficina!B4:AW4")
+                    .execute();
+            filaTitulosInventarioOficina = respuesta1.getValues();
+           
+            int columna=buscarColumna("SERIAL",filaTitulosInventarioOficina);
+            ValueRange respuesta2 = service.spreadsheets().values()
+                .get(spreadsheetId, "Oficina!" + abc[columna - 1] + ":" + abc[columna - 1])
+                .execute();
+                crearLista(seriales, respuesta2.getValues());
+            
+            
+        } catch (Exception ex) {
+           throw new ExcepcionInventario("Error al intentar buscar si el serial del computador ya existia ");
+        }
+    
+    }
+    
     public void definirTipoInventario(int ind) throws ExcepcionInventario {
         try {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -228,16 +259,7 @@ public class InformacionPC {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
-                    .build();
-            ValueRange respuesta;
-            respuesta = service.spreadsheets().values()
-                    .get(spreadsheetId, "Oficina!B5:C")
-                    .execute();
-            filaDocumento = respuesta.getValues().size() + 4;
-            ValueRange respuesta1 = service.spreadsheets().values()
-                    .get(spreadsheetId, "Oficina!B4:AW4")
-                    .execute();
-            filaTitulosInventarioOficina = respuesta1.getValues();
+                    .build();           
             guardarFecha(service);
             String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
                 serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
