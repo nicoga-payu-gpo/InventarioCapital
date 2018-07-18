@@ -10,21 +10,32 @@ package presentacion;
  * @author ngarcia
  */
 public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
-    
+
     private InventarioGUI gui;
+
     /**
      * Creates new form MenuConfirmacionDatos
      */
     public MenuConfirmacionDatosOficina(InventarioGUI g) {
-        gui=g;
+        gui = g;
         initComponents();
-        
-       
+
     }
-    
-    public void actualizarCampos(){
-         jTextField1.setText(gui.getInfoPC().getNombrePC());
-    
+
+    public void actualizarCampos() {
+        jTextField1.setText(gui.getInfoPC().getNombrePC());
+        jTextField9.setText(gui.getInfoPC().getMarcaPC());
+        jTextField7.setText(gui.getInfoPC().getSerialPC());
+        jTextField8.setText(gui.getInfoPC().getUserAdmin());
+        jTextField5.setText(gui.getInfoPC().getGrupo());
+        jTextField6.setText(gui.getInfoPC().getDominio());
+        jTextField11.setText(gui.getInfoPC().getIp());
+        jTextField10.setText(gui.getInfoPC().getProcesador());
+        jTextField2.setText(gui.getInfoPC().getPlacaBase());
+        jTextField12.setText(gui.getInfoPC().getUnidadCD());
+        jTextField3.setText(gui.getInfoPC().getTarjetaGrafica());
+        jTextField4.setText(gui.getInfoPC().getDiscoDuro());
+
     }
 
     /**
@@ -127,6 +138,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField3.setBackground(new java.awt.Color(39, 118, 239));
         jTextField3.setForeground(new java.awt.Color(255, 255, 255));
         jTextField3.setBorder(null);
+        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField3ActionPerformed(evt);
+            }
+        });
 
         jSeparator3.setBackground(new java.awt.Color(39, 118, 239));
         jSeparator3.setForeground(new java.awt.Color(255, 255, 255));
@@ -153,6 +169,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField5.setBackground(new java.awt.Color(39, 118, 239));
         jTextField5.setForeground(new java.awt.Color(255, 255, 255));
         jTextField5.setBorder(null);
+        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField5ActionPerformed(evt);
+            }
+        });
 
         jSeparator5.setBackground(new java.awt.Color(39, 118, 239));
         jSeparator5.setForeground(new java.awt.Color(255, 255, 255));
@@ -187,6 +208,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField9.setBackground(new java.awt.Color(39, 118, 239));
         jTextField9.setForeground(new java.awt.Color(255, 255, 255));
         jTextField9.setBorder(null);
+        jTextField9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField9ActionPerformed(evt);
+            }
+        });
 
         jTextField2.setBackground(new java.awt.Color(39, 118, 239));
         jTextField2.setForeground(new java.awt.Color(255, 255, 255));
@@ -212,6 +238,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField6.setBackground(new java.awt.Color(39, 118, 239));
         jTextField6.setForeground(new java.awt.Color(255, 255, 255));
         jTextField6.setBorder(null);
+        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField6ActionPerformed(evt);
+            }
+        });
 
         jSeparator9.setBackground(new java.awt.Color(39, 118, 239));
         jSeparator9.setForeground(new java.awt.Color(255, 255, 255));
@@ -222,6 +253,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField11.setBackground(new java.awt.Color(39, 118, 239));
         jTextField11.setForeground(new java.awt.Color(255, 255, 255));
         jTextField11.setBorder(null);
+        jTextField11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField11ActionPerformed(evt);
+            }
+        });
 
         jSeparator11.setBackground(new java.awt.Color(39, 118, 239));
         jSeparator11.setForeground(new java.awt.Color(255, 255, 255));
@@ -232,6 +268,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField10.setBackground(new java.awt.Color(39, 118, 239));
         jTextField10.setForeground(new java.awt.Color(255, 255, 255));
         jTextField10.setBorder(null);
+        jTextField10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField10ActionPerformed(evt);
+            }
+        });
 
         jSeparator10.setBackground(new java.awt.Color(39, 118, 239));
         jSeparator10.setForeground(new java.awt.Color(255, 255, 255));
@@ -261,11 +302,13 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jScrollPane2.setViewportView(jTextArea2);
 
         jButton1.setBackground(new java.awt.Color(39, 118, 239));
+        jButton1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Agregar equipo al inventario");
         jButton1.setBorder(null);
 
         jButton2.setBackground(new java.awt.Color(39, 118, 239));
+        jButton2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Atras");
         jButton2.setBorder(null);
@@ -448,13 +491,9 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
                     .addComponent(jButton1))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(jSeparator14, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jSeparator14, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(11, 11, 11))
         );
-
-        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\ngarcia\\Documents\\NetBeansProjects\\SistemaInventarios\\res\\logo-trans.png")); // NOI18N
 
         jLabel1.setBackground(new java.awt.Color(0, 0, 0));
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getSize()+24f));
@@ -469,44 +508,42 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(186, 896, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(186, 186, 186))
+                .addGap(218, 218, 218))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(14, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)))
+                .addContainerGap(8, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
-        // TODO add your handling code here:
+        gui.getInfoPC().setSerialPC(jTextField7.getText());
     }//GEN-LAST:event_jTextField7ActionPerformed
 
     private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        // TODO add your handling code here:
+        gui.getInfoPC().setUserAdimn(jTextField8.getText());
     }//GEN-LAST:event_jTextField8ActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
+        gui.getInfoPC().setPlacaBase(jTextField2.getText());
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
-        // TODO add your handling code here:
+        gui.getInfoPC().setDiscoDuro(jTextField4.getText());
     }//GEN-LAST:event_jTextField4ActionPerformed
 
     private void jTextField12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField12ActionPerformed
-        // TODO add your handling code here:
+         gui.getInfoPC().setUnidadCD(jTextField12.getText());
     }//GEN-LAST:event_jTextField12ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -516,6 +553,29 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         gui.getInfoPC().setNombrePC(jTextField1.getText());
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
+        gui.getInfoPC().setMarcaPC(jTextField9.getText());
+    }//GEN-LAST:event_jTextField9ActionPerformed
+
+    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+        gui.getInfoPC().setGrupo(jTextField5.getText());
+    }//GEN-LAST:event_jTextField5ActionPerformed
+
+    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+        gui.getInfoPC().setDominio(jTextField6.getText());    }//GEN-LAST:event_jTextField6ActionPerformed
+
+    private void jTextField11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField11ActionPerformed
+        gui.getInfoPC().setIp(jTextField11.getText());
+    }//GEN-LAST:event_jTextField11ActionPerformed
+
+    private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
+        gui.getInfoPC().setProcesador(jTextField10.getText());
+    }//GEN-LAST:event_jTextField10ActionPerformed
+
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+        gui.getInfoPC().setTarjetaGrafica(jTextField3.getText());
+    }//GEN-LAST:event_jTextField3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
