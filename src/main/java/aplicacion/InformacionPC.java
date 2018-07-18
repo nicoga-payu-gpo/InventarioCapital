@@ -139,7 +139,48 @@ public class InformacionPC {
         "ANTIVIRUS", "DISTRIBUCION OFFICE", "VERSIÓN OFFICE", "LICENCIA OFFICE", "ACTIVO", "instalada", "DISTRUBUCION WINDOWS", "ID PRODUCTO", "LICENCIA WINDOWS", "LICENCIA (BIOS)",
         "COA", "DISTRIBUCION PROJECT", "VERSIÓN PROJECT", "LICENCIA PROJECT", "DISTRIBUCION AUTOCAD", "VERSIÓN AUTOCAD", "LICENCIA AUTOCAD", "LICENCIA OTRO"};
 
-    public InformacionPC(int ind) throws ExcepcionInventario {
+    public InformacionPC() {
+        nombreAnteriorPC = "N/A";
+        nombrePC = "N/A";
+        numeroFactura = "N/A";
+        personaAsignada = "N/A";
+        lugar = "N/A";
+        area = "N/A";
+        placaPC = "N/A";
+        marcaPC = "N/A";
+        modeloPC = "N/A";
+        serialPC = "N/A";
+        userAdmin = "N/A";
+        Grupo = "N/A";
+        Dominio = "N/A";      
+        ip = "N/A";;
+        procesador = "N/A";
+        ram = "N/A";
+        placaBase = "N/A";
+        tarjetaGrafica = "N/A";
+        discoDuro = "N/A";
+        unidadCD = "N/A";
+        antivirus = "N/A";
+        distribucionOffice = "N/A";
+        versionOffice = "N/A";
+        licenciaOffice = "N/A";
+        officeActivo = "N/A";
+        officeInstalado = "N/A";
+        distribucionWindows = "N/A";
+        idWindows = "N/A";
+        licenciaWindows = "N/A";
+        licenciaWindowsBIOS = "N/A";
+        coaWindows = "N/A";
+        distribucionProject = "N/A";
+        versionProject = "N/A";
+        licenciaProject = "N/A";
+        distribucionAutocad = "N/A";
+        versionAutocad = "N/A";
+        licenciaAutocad = "N/A";
+        licenciaOtro = "N/A";
+    }
+
+    public void definirTipoInventario(int ind) throws ExcepcionInventario {
         try {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
@@ -182,27 +223,32 @@ public class InformacionPC {
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
 
-    public void guardarDatosOficina() throws IOException, GeneralSecurityException {
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-        ValueRange respuesta = service.spreadsheets().values()
-                .get(spreadsheetId, "Oficina!B5:C")
-                .execute();
-        filaDocumento = respuesta.getValues().size() + 4;
-        ValueRange respuesta1 = service.spreadsheets().values()
-                .get(spreadsheetId, "Oficina!B4:AW4")
-                .execute();
-        filaTitulosInventarioOficina = respuesta1.getValues();
-        guardarFecha(service);
-        String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
-            serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
-            idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
-        /*for (int i = 0; i < titulos.length; i++) {
-            System.out.println(datosPC[i]);
-            guardarDato(titulos[i], datosPC[i], service,listaTitulosInventarioOficina);
-        }*/
+    public void guardarDatosOficina() throws ExcepcionInventario {
+        try {
+            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+            Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+            ValueRange respuesta;
+            respuesta = service.spreadsheets().values()
+                    .get(spreadsheetId, "Oficina!B5:C")
+                    .execute();
+            filaDocumento = respuesta.getValues().size() + 4;
+            ValueRange respuesta1 = service.spreadsheets().values()
+                    .get(spreadsheetId, "Oficina!B4:AW4")
+                    .execute();
+            filaTitulosInventarioOficina = respuesta1.getValues();
+            guardarFecha(service);
+            String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
+                serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
+                idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
+            for (int i = 0; i < titulos.length; i++) {
+                guardarDato(titulos[i], datosPC[i], service, filaTitulosInventarioOficina);
+            }
+        } catch (Exception ex) {
+            throw new ExcepcionInventario("Error al intentar guardar datos en Google sheets: " + ex.getMessage());
+        }
+
     }
 
     private void guardarFecha(Sheets s) throws IOException {
@@ -254,8 +300,8 @@ public class InformacionPC {
     private void crearLista(ArrayList<String> a, List<List<Object>> l) {
         a.add("N/A");
         for (int columna = 2; columna < l.size(); columna++) {
-            if(! l.get(columna).isEmpty()){
-            a.add((String) l.get(columna).get(0));
+            if (!l.get(columna).isEmpty()) {
+                a.add((String) l.get(columna).get(0));
             }
         }
     }
@@ -271,7 +317,7 @@ public class InformacionPC {
         ValueRange respuesta1 = s.spreadsheets().values()
                 .get(spreadsheetId, "Opciones Programa!" + abc[columna - 1] + ":" + abc[columna - 1])
                 .execute();
-        
+
         crearLista(l, respuesta1.getValues());
 
     }
@@ -282,7 +328,7 @@ public class InformacionPC {
             int cont = 0;
             boolean salida = false;
             while (fila.size() > cont && !salida) {
-                
+
                 if (fila.get(cont).equals(s)) {
                     salida = true;
                     columna = cont + 1;
@@ -324,14 +370,8 @@ public class InformacionPC {
             tipoDeEquipo = "LAPTOP";
         } else if (tipoPC == 2) {
             tipoDeEquipo = "TODO EN UNO";
-        }
-        nombreAnteriorPC = "N/A";
+        }       
         nombrePC = buscarNombrePC();
-        numeroFactura = "N/A";
-        personaAsignada = "N/A";
-        lugar = "N/A";
-        area = "N/A";
-        placaPC = "N/A";
         marcaPC = buscarMarcaPC().toUpperCase();
         modeloPC = buscarModeloPC().toUpperCase();
         serialPC = buscarSerialPC().toUpperCase();
@@ -376,26 +416,7 @@ public class InformacionPC {
         tarjetaGrafica = buscarTarjetaGraficaPC().toUpperCase();
         discoDuro = buscarDiscoDuroPC().toUpperCase();
         unidadCD = buscarUnidadCDPC().toUpperCase();
-      
-        antivirus = "N/A";
-        distribucionOffice = "N/A";
-        versionOffice = "N/A";
-        licenciaOffice = "N/A";
-        officeActivo = "N/A";
-        officeInstalado = "N/A";
-        distribucionWindows = "N/A";
-        idWindows = "N/A";
-        licenciaWindows = "N/A";
-        licenciaWindowsBIOS = "N/A";
-        coaWindows = "N/A";
-        distribucionProject = "N/A";
-        versionProject = "N/A";
-        licenciaProject = "N/A";
-        distribucionAutocad = "N/A";
-        versionAutocad = "N/A";
-        licenciaAutocad = "N/A";
-        licenciaOtro = "N/A";
-        
+
 
     }
 
@@ -440,14 +461,14 @@ public class InformacionPC {
             while ((line = br.readLine()) != null) {
                 if (line.trim().startsWith(especificacion)) {
                     if (recortar) {
-                        respuesta.add(line.trim().substring(especificacion.length()));
+                        respuesta.add(line.trim().substring(especificacion.length()).toUpperCase());
                     } else {
-                        respuesta.add(line.trim());
+                        respuesta.add(line.trim().toUpperCase());
                     }
                 }
             }
         } catch (IOException | InterruptedException ex) {
-           throw new ExcepcionInventario("Error al ejecutar comando DirectX.");
+            throw new ExcepcionInventario("Error al ejecutar comando DirectX.");
         }
         return respuesta;
     }
@@ -574,6 +595,7 @@ public class InformacionPC {
     }
 
     public void setPersonaAsignada(String personaAsignada) {
+        System.out.println(personaAsignada);
         this.personaAsignada = personaAsignada.toUpperCase();
     }
 
@@ -843,5 +865,9 @@ public class InformacionPC {
 
     public String getUnidadCD() {
         return unidadCD;
+    }
+
+    public String getModeloPantalla() {
+        return modeloPantalla;
     }
 }

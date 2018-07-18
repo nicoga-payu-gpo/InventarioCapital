@@ -49,12 +49,8 @@ public class InventarioGUI extends JFrame {
     }
 
     private void prepareElementos() {
-        try {
-            infoPC = new InformacionPC(0);
-        } catch (ExcepcionInventario ex) {
-            new JOptionPane(ex.getMessage()).setVisible(true);
-            System.out.println(ex.getMessage());
-        }
+        
+        infoPC = new InformacionPC();
         setTitle("Inventario Computadores Constructora Capital");
         contenedor = getContentPane();
         menuConfirmacionDatosOficina = new MenuConfirmacionDatosOficina(this);
@@ -69,9 +65,13 @@ public class InventarioGUI extends JFrame {
         contenedor.setLayout(card);
         card.show(contenedor, "menuPrincipal");
         setSize(928, 680);
+        centrar();
+
+    }
+
+    private void centrar() {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screen.width - getSize().width) / 2, (screen.height - getSize().height) / 2);
-
     }
 
     private void prepareAcciones() {
@@ -98,20 +98,30 @@ public class InventarioGUI extends JFrame {
     public InformacionPC getInfoPC() {
         return infoPC;
     }
-    
-    public void mostrarMenuPrincipal(){
+
+    public void mostrarMenuPrincipal() {
         setSize(928, 680);
         card.show(contenedor, "menuPrincipal");
+        centrar();
     }
-    
-    public void mostrarMenuInventarioOficina(){
-        setSize(928, 680);
+
+    public void mostrarMenuInventarioOficina() {
+        setSize(1000, 700);
+        menuInventarioOficina.actualizarCampos();
         card.show(contenedor, "menuInventarioOficina");
+        centrar();
+
     }
-    
-    public void motrarMenuConfirmacionDatosOficina(){
-        setSize(925, 550);
+
+    public void motrarMenuConfirmacionDatosOficina() {
+        setSize(1000, 600);
         menuConfirmacionDatosOficina.actualizarCampos();
         card.show(contenedor, "menuConfirmacionDatosOficina");
+        centrar();
     }
+
+    public MenuInventario getMenuInventarioOficina() {
+        return menuInventarioOficina;
+    }
+
 }
