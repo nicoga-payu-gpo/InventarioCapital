@@ -14,6 +14,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -34,7 +35,6 @@ public class InventarioGUI extends JFrame {
 
     public static void main(String[] args) throws IOException {
         new InventarioGUI();
-      
 
     }
 
@@ -45,7 +45,7 @@ public class InventarioGUI extends JFrame {
     }
 
     private void prepareElementos() {
-        
+
         infoPC = new InformacionPC();
         setTitle("Inventario Computadores Constructora Capital");
         contenedor = getContentPane();
