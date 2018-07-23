@@ -133,6 +133,7 @@ public class InformacionPC {
     private ArrayList<String> listaDistribucionAutocad = new ArrayList<String>();
     private ArrayList<String> listaLicenciasAutocad = new ArrayList<String>();
     private ArrayList<String> seriales = new ArrayList<String>();
+    private Sheets service;
     private String[] abc = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"};
 
     String[] titulos = {"N FACTURA", "TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "AREA", "MARCA", "MODELO", "SERIAL", "PLACA",
@@ -141,37 +142,41 @@ public class InformacionPC {
         "COA", "DISTRIBUCION PROJECT", "VERSIÓN PROJECT", "LICENCIA PROJECT", "DISTRIBUCION AUTOCAD", "VERSIÓN AUTOCAD", "LICENCIA AUTOCAD", "LICENCIA OTRO"};
 
     public InformacionPC() {
-        nombreAnteriorPC = "N/A";
-        nombrePC = "N/A";
-        numeroFactura = "N/A";
-        personaAsignada = "N/A";
+        resetearCampos();
+    }
+    
+    public void resetearCampos(){
+        nombreAnteriorPC = "";
+        nombrePC = "";
+        numeroFactura = "";
+        personaAsignada = "";
         lugar = "N/A";
         area = "N/A";
-        placaPC = "N/A";
-        marcaPC = "N/A";
-        modeloPC = "N/A";
-        serialPC = "N/A";
-        userAdmin = "N/A";
-        Grupo = "N/A";
-        Dominio = "N/A";
-        ip = "N/A";;
-        procesador = "N/A";
-        ram = "N/A";
-        placaBase = "N/A";
-        tarjetaGrafica = "N/A";
-        discoDuro = "N/A";
-        unidadCD = "N/A";
-        antivirus = "N/A";
+        placaPC = "";
+        marcaPC = "";
+        modeloPC = "";
+        serialPC = "";
+        userAdmin = "";
+        Grupo = "";
+        Dominio = "";
+        ip = "";
+        procesador = "";
+        ram = "";
+        placaBase = "";
+        tarjetaGrafica = "";
+        discoDuro = "";
+        unidadCD = "";
+        antivirus = "BITDEFENDER";
         distribucionOffice = "N/A";
         versionOffice = "N/A";
         licenciaOffice = "N/A";
-        officeActivo = "N/A";
-        officeInstalado = "N/A";
+        officeActivo = "";
+        officeInstalado = "";
         distribucionWindows = "N/A";
-        idWindows = "N/A";
-        licenciaWindows = "N/A";
-        licenciaWindowsBIOS = "N/A";
-        coaWindows = "N/A";
+        idWindows = "";
+        licenciaWindows = "";
+        licenciaWindowsBIOS = "";
+        coaWindows = "";
         distribucionProject = "N/A";
         versionProject = "N/A";
         licenciaProject = "N/A";
@@ -179,25 +184,25 @@ public class InformacionPC {
         versionAutocad = "N/A";
         licenciaAutocad = "N/A";
         licenciaOtro = "N/A";
+    
+    
     }
 
-    public ArrayList<ArrayList<String>> buscarPCEnInventarioOficina(Sheets se) throws ExcepcionInventario {
+    public ArrayList<ArrayList<String>> buscarPCEnInventarioOficina() throws ExcepcionInventario {
         try {
             ArrayList<ArrayList<String>> computadoresConMismoSerial = new ArrayList<ArrayList<String>>();
-
             String s = buscarSerialPC();
-
             ValueRange respuesta;
-            respuesta = se.spreadsheets().values()
+            respuesta = service.spreadsheets().values()
                     .get(spreadsheetId, "Oficina!B5:C")
                     .execute();
             filaDocumento = respuesta.getValues().size() + 4;
-            ValueRange respuesta1 = se.spreadsheets().values()
+            ValueRange respuesta1 = service.spreadsheets().values()
                     .get(spreadsheetId, "Oficina!B4:AW4")
                     .execute();
             filaTitulosInventarioOficina = respuesta1.getValues();
             int columna = buscarColumna("SERIAL", filaTitulosInventarioOficina) + 1;
-            ValueRange respuesta2 = se.spreadsheets().values()
+            ValueRange respuesta2 = service.spreadsheets().values()
                     .get(spreadsheetId, "Oficina!" + abc[columna - 1] + ":" + abc[columna - 1])
                     .execute();
             seriales = crearLista(respuesta2.getValues());
@@ -205,9 +210,13 @@ public class InformacionPC {
                 if (seriales.get(i).trim().equals(s.trim())) {
                     computadoresConMismoSerial.add(new ArrayList<String>());
                     computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add(Integer.toString(i + 3) + " - ");
-                    computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add(datosComputadorConMismoSerial(i + 3, se));
+                    computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add(datosComputadorConMismoSerial(i + 3));
                 }
             }
+            ArrayList<String> a= new ArrayList<String>();
+            a.add(Integer.toString(filaDocumento));
+            a.add("Agregar como nuevo computador.");
+            computadoresConMismoSerial.add(a);
 
             return computadoresConMismoSerial;
         } catch (IOException ex) {
@@ -215,12 +224,12 @@ public class InformacionPC {
         }
     }
 
-    private String datosComputadorConMismoSerial(int fila, Sheets s) throws ExcepcionInventario {
+    private String datosComputadorConMismoSerial(int fila) throws ExcepcionInventario {
         String a = "";
         try {
             int columnaInicial = buscarColumna("TIPO EQUIPO", filaTitulosInventarioOficina) + 1;
             int columnaFinal = buscarColumna("ASIGNADO A", filaTitulosInventarioOficina) + 1;
-            ValueRange respuesta = s.spreadsheets().values()
+            ValueRange respuesta = service.spreadsheets().values()
                     .get(spreadsheetId, "Oficina!" + abc[columnaInicial - 1] + (fila) + ":" + abc[columnaFinal - 1] + (fila))
                     .execute();
             List<List<Object>> datos = respuesta.getValues();
@@ -248,7 +257,7 @@ public class InformacionPC {
         try {
 
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+            service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
             ValueRange respuesta = service.spreadsheets().values()
@@ -256,8 +265,8 @@ public class InformacionPC {
                     .execute();
             filaTitulosConfiguracion = respuesta.getValues();
             if (ind == OFICINA) {
-                buscarDatosOficina(service);
-                computadoresConSerialesiguales = buscarPCEnInventarioOficina(service);
+                buscarDatosOficina();
+                computadoresConSerialesiguales = buscarPCEnInventarioOficina();
             } else if (ind == OBRA) {
 
             }
@@ -290,17 +299,13 @@ public class InformacionPC {
     }
 
     public void guardarDatosOficina() throws ExcepcionInventario {
-        try {
-            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                    .setApplicationName(APPLICATION_NAME)
-                    .build();
-            guardarFecha(service);
+        try {           
+            guardarFecha();
             String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
                 serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
                 idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
             for (int i = 0; i < titulos.length; i++) {
-                guardarDato(titulos[i], datosPC[i], service, filaTitulosInventarioOficina);
+                guardarDato(titulos[i], datosPC[i], filaTitulosInventarioOficina);
             }
         } catch (Exception ex) {
             throw new ExcepcionInventario("Error al intentar guardar datos en Google sheets: " + ex.getMessage());
@@ -308,13 +313,12 @@ public class InformacionPC {
 
     }
 
-    private void guardarFecha(Sheets s) throws IOException {
+    private void guardarFecha() throws IOException {
         List<Request> requests = new ArrayList<>();
 
         List<CellData> valores = new ArrayList<>();
         Date fecha = new Date();
         String fe = new SimpleDateFormat("dd/MM/yyyy").format(fecha);
-        System.out.println(fe);
         CellData cell = new CellData();
         cell.setUserEnteredValue(new ExtendedValue().setStringValue(fe));
         cell.setUserEnteredFormat(new CellFormat().setNumberFormat(new NumberFormat().setType("DATE")));
@@ -330,26 +334,25 @@ public class InformacionPC {
                         .setFields("userEnteredValue,userEnteredFormat.backgroundColor")));
         BatchUpdateSpreadsheetRequest batchUpdateRequest = new BatchUpdateSpreadsheetRequest()
                 .setRequests(requests);
-        s.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
+        service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
                 .execute();
 
     }
 
-    private void buscarDatosOficina(Sheets s) throws ExcepcionInventario {
+    private void buscarDatosOficina() throws ExcepcionInventario {
         try {
-            lugaresOficina=obtenerColumna(s, buscarColumna("LUGARES OFICINA", filaTitulosConfiguracion));
-            
-            areasOficina=obtenerColumna(s, buscarColumna("AREAS OFICINA", filaTitulosConfiguracion));
-            listaDistribucionOffice= obtenerColumna(s, buscarColumna("DISTRIBUCION OFFICE", filaTitulosConfiguracion) );
-            listaLicenciasOffice=obtenerLicencias("Office", "D", s);
-            listaVersionOffice=obtenerColumna(s, buscarColumna("VERSION OFFICE", filaTitulosConfiguracion) );
-            listaDistribucionWindows=obtenerColumna(s, buscarColumna("DISTRIBUCION WINDOWS", filaTitulosConfiguracion) );
-            listaVersionProject=obtenerColumna(s, buscarColumna("VERSION PROJECT", filaTitulosConfiguracion) );
-            listaDistribucionProject=obtenerColumna(s, buscarColumna("DISTRIBUCION PROJECT", filaTitulosConfiguracion) );
-            listaLicenciasProject=obtenerLicencias("Project", "C", s);
-            listaDistribucionAutocad=obtenerColumna(s, buscarColumna("DISTRIBUCION AUTOCAD", filaTitulosConfiguracion));
-            listaVersionAutocad=obtenerColumna(s, buscarColumna("VERSION AUTOCAD", filaTitulosConfiguracion));
-            listaLicenciasAutocad=obtenerLicencias("AutoCad", "E", s);
+            lugaresOficina=obtenerColumna( buscarColumna("LUGARES OFICINA", filaTitulosConfiguracion));          
+            areasOficina=obtenerColumna( buscarColumna("AREAS OFICINA", filaTitulosConfiguracion));
+            listaDistribucionOffice= obtenerColumna( buscarColumna("DISTRIBUCION OFFICE", filaTitulosConfiguracion) );
+            listaLicenciasOffice=obtenerLicencias("Office", "D");
+            listaVersionOffice=obtenerColumna(buscarColumna("VERSION OFFICE", filaTitulosConfiguracion) );
+            listaDistribucionWindows=obtenerColumna( buscarColumna("DISTRIBUCION WINDOWS", filaTitulosConfiguracion) );
+            listaVersionProject=obtenerColumna( buscarColumna("VERSION PROJECT", filaTitulosConfiguracion) );
+            listaDistribucionProject=obtenerColumna( buscarColumna("DISTRIBUCION PROJECT", filaTitulosConfiguracion) );
+            listaLicenciasProject=obtenerLicencias("Project", "C");
+            listaDistribucionAutocad=obtenerColumna( buscarColumna("DISTRIBUCION AUTOCAD", filaTitulosConfiguracion));
+            listaVersionAutocad=obtenerColumna( buscarColumna("VERSION AUTOCAD", filaTitulosConfiguracion));
+            listaLicenciasAutocad=obtenerLicencias("AutoCad", "E");
         } catch (IOException ex) {
             throw new ExcepcionInventario("Error al buscar datos en el apartado Opciones Programa de google sheets.");
         }
@@ -366,16 +369,16 @@ public class InformacionPC {
         return a;
     }
 
-    private ArrayList<String> obtenerLicencias(String hoja, String columna, Sheets s) throws IOException {
-        ValueRange respuesta1 = s.spreadsheets().values()
+    private ArrayList<String> obtenerLicencias(String hoja, String columna) throws IOException {
+        ValueRange respuesta1 = service.spreadsheets().values()
                 .get(spreadsheetId, hoja + "!" + columna + ":" + columna)
                 .execute();
 
         return crearLista(respuesta1.getValues()) ;
     }
 
-    private ArrayList<String> obtenerColumna(Sheets s, int columna) throws IOException {
-        ValueRange respuesta1 = s.spreadsheets().values()
+    private ArrayList<String> obtenerColumna( int columna) throws IOException {
+        ValueRange respuesta1 = service.spreadsheets().values()
                 .get(spreadsheetId, "Opciones Programa!" + abc[columna - 1] + ":" + abc[columna - 1])
                 .execute();
         
@@ -399,7 +402,7 @@ public class InformacionPC {
         return columna;
     }
 
-    private void guardarDato(String c, String p, Sheets s, List<List<Object>> l) throws IOException {
+    private void guardarDato(String c, String p, List<List<Object>> l) throws IOException {
         List<Request> requests = new ArrayList<>();
         List<CellData> valores = new ArrayList<>();
         if (p.isEmpty() || p.trim().equals("")) {
@@ -420,7 +423,7 @@ public class InformacionPC {
                         .setFields("userEnteredValue,userEnteredFormat.backgroundColor")));
         BatchUpdateSpreadsheetRequest batchUpdateRequest = new BatchUpdateSpreadsheetRequest()
                 .setRequests(requests);
-        s.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
+        service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
                 .execute();
         ;
     }
@@ -624,7 +627,7 @@ public class InformacionPC {
 
     private String buscarPlacaBasePC() throws ExcepcionInventario {
         String[] comando = {"CMD", "/C", "wmic baseboard get product,Manufacturer,version,serialnumber"};
-        return ejecutarComandoWMIC(comando).get(2);
+        return ejecutarComandoWMIC(comando).get(2).trim();
     }
 
     private String buscarTarjetaGraficaPC() throws ExcepcionInventario {
@@ -932,4 +935,49 @@ public class InformacionPC {
     public String getModeloPantalla() {
         return modeloPantalla;
     }
+
+    public void setFilaDocumento(int filaDocumento) {
+        this.filaDocumento = filaDocumento;
+    }
+
+    public String getNombreAnteriorPC() {
+        return nombreAnteriorPC;
+    }
+
+    public String getNumeroFactura() {
+        return numeroFactura;
+    }
+
+    public String getPersonaAsignada() {
+        return personaAsignada;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public String getAntivirus() {
+        return antivirus;
+    }
+
+    public String getCoaWindows() {
+        return coaWindows;
+    }
+
+    public ArrayList<String> getSeriales() {
+        return seriales;
+    }
+
+    public String getIdWindows() {
+        return idWindows;
+    }
+
+    public String getLicenciaWindows() {
+        return licenciaWindows;
+    }
+
+    public String getLicenciaWindowsBIOS() {
+        return licenciaWindowsBIOS;
+    }
+    
 }

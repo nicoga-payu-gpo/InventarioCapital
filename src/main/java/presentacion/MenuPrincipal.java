@@ -18,14 +18,14 @@ import javax.swing.JOptionPane;
  * @author ngarcia
  */
 public class MenuPrincipal extends javax.swing.JPanel {
-    
+
     private InventarioGUI gui;
 
     /**
      * Creates new form MenuPrincipal
      */
     public MenuPrincipal(InventarioGUI g) {
-        gui=g;
+        gui = g;
         initComponents();
     }
 
@@ -212,23 +212,30 @@ public class MenuPrincipal extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {            
-            ArrayList<ArrayList<String>> opcionesDeActualizacion =gui.getInfoPC().definirTipoInventario(InformacionPC.OFICINA);            
-            if(!opcionesDeActualizacion.isEmpty()){
-                ArrayList<String> listaSeleccion=new ArrayList<String>();
-                for(ArrayList<String> l:opcionesDeActualizacion){
+        try {
+            ArrayList<ArrayList<String>> opcionesDeActualizacion = gui.getInfoPC().definirTipoInventario(InformacionPC.OFICINA);
+            if (opcionesDeActualizacion.size() > 1) {
+                ArrayList<String> listaSeleccion = new ArrayList<String>();
+                for (ArrayList<String> l : opcionesDeActualizacion) {
                     listaSeleccion.add(l.get(1));
                 }
-                
-                String rta = (String) JOptionPane.showInputDialog(null, "El serial de este computador ha sido encontrado en el inventario, si desea actualizar datos seleccionelo en la lista a continuacion:"
-                        , "Serial encontrado en el inventario", JOptionPane.DEFAULT_OPTION,null,listaSeleccion.toArray(), listaSeleccion.get(0));
+
+                String rta = (String) JOptionPane.showInputDialog(null, "El serial de este computador ha sido encontrado en el inventario, si desea actualizar datos seleccionelo en la lista a continuacion:",
+                         "Serial encontrado en el inventario", JOptionPane.DEFAULT_OPTION, null, listaSeleccion.toArray(), listaSeleccion.get(0));
+                if  (!rta.equals("Agregar como nuevo computador.")) {
+                    for (ArrayList<String> l : opcionesDeActualizacion) {
+                        if (l.get(1).equals(rta)) {
+                            gui.getInfoPC().setFilaDocumento(Integer.parseInt(l.get(0)));
+                        }
+                    }
+                }
             }
-            
-            gui.mostrarMenuInventarioOficina();
+
+            gui.mostrarMenuInventarioOficina(true);
         } catch (ExcepcionInventario ex) {
-            JOptionPane.showMessageDialog(this,  ex.getMessage());
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-       
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

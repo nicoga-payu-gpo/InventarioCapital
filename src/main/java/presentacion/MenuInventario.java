@@ -34,10 +34,23 @@ public class MenuInventario extends javax.swing.JPanel {
         gui.getInfoPC().setOfficeInstalado("SI");
         gui.getInfoPC().setOfficeActivo("SI");
         initComponents();
+        iniciarJComboBoxs();
 
     }
 
-    public void actualizarCampos() {
+    public void actualizarCampos(boolean borrarTodo) {
+        
+        actualizarJTextFields();
+        if(borrarTodo){
+             jComboBox5.setSelectedIndex(0);
+             
+             
+        }
+       
+        
+
+    }
+    private void iniciarJComboBoxs(){
         configurarComboBox(jComboBox5, gui.getInfoPC().getLugaresOficina());
         configurarComboBox(jComboBox4, gui.getInfoPC().getAreasOficina());
         configurarComboBox(jComboBox1, gui.getInfoPC().getListaDistribucionOffice());
@@ -50,7 +63,17 @@ public class MenuInventario extends javax.swing.JPanel {
         configurarComboBox(jComboBox8, gui.getInfoPC().getListaDistribucionAutocad());
         configurarComboBox(jComboBox12, gui.getInfoPC().getListaVersionAutocad());
         configurarComboBox(jComboBox9, gui.getInfoPC().getListaLicenciasAutocad());
-
+    }
+    
+    private void actualizarJTextFields(){
+        jTextField1.setText(gui.getInfoPC().getPersonaAsignada());
+        jTextField2.setText(gui.getInfoPC().getPlacaPC());
+        jTextField6.setText(gui.getInfoPC().getNumeroFactura());
+        jTextField3.setText(gui.getInfoPC().getIdWindows());
+        jTextField4.setText(gui.getInfoPC().getLicenciaWindows());
+        jTextField5.setText(gui.getInfoPC().getLicenciaWindows());
+        jTextField8.setText(gui.getInfoPC().getCoaWindows());
+        jTextField7.setText(gui.getInfoPC().getAntivirus());
     }
 
     private void configurarComboBox(JComboBox j, ArrayList<String> s) {

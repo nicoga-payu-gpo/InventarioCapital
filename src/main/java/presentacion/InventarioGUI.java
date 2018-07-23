@@ -97,13 +97,14 @@ public class InventarioGUI extends JFrame {
 
     public void mostrarMenuPrincipal() {
         setSize(928, 680);
+        infoPC.resetearCampos();
         card.show(contenedor, "menuPrincipal");
         centrar();
     }
 
-    public void mostrarMenuInventarioOficina() {
+    public void mostrarMenuInventarioOficina(boolean borrarTodo) {
         setSize(1000, 700);
-        menuInventarioOficina.actualizarCampos();
+        menuInventarioOficina.actualizarCampos(borrarTodo);
         card.show(contenedor, "menuInventarioOficina");
         centrar();
 
