@@ -35,6 +35,7 @@ public class InventarioGUI extends JFrame {
 
     public static void main(String[] args) throws IOException {
         new InventarioGUI();
+       
 
     }
 
@@ -102,9 +103,9 @@ public class InventarioGUI extends JFrame {
         centrar();
     }
 
-    public void mostrarMenuInventarioOficina(boolean borrarTodo) {
+    public void mostrarMenuInventarioOficina() {
         setSize(1000, 700);
-        menuInventarioOficina.actualizarCampos(borrarTodo);
+        menuInventarioOficina.actualizarCampos();
         card.show(contenedor, "menuInventarioOficina");
         centrar();
 

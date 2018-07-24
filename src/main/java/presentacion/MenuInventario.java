@@ -8,8 +8,6 @@ package presentacion;
 import aplicacion.ExcepcionInventario;
 import aplicacion.InformacionPC;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -23,6 +21,7 @@ public class MenuInventario extends javax.swing.JPanel {
     private InventarioGUI gui;
     private int tipoPC;
     private boolean multiplesPantallas;
+    private boolean primerInicio = true;
 
     /**
      * Creates new form MenuInventario
@@ -38,19 +37,34 @@ public class MenuInventario extends javax.swing.JPanel {
 
     }
 
-    public void actualizarCampos(boolean borrarTodo) {
-        
+    public void actualizarCampos() {
         actualizarJTextFields();
-        if(borrarTodo){
-             jComboBox5.setSelectedIndex(0);
-             
-             
+        actualizarJComboBoxs();
+        gui.getInfoPC().getT
+
+        if (primerInicio) {
+            iniciarJComboBoxs();
+            primerInicio = false;
         }
-       
-        
 
     }
-    private void iniciarJComboBoxs(){
+
+    private void actualizarJComboBoxs() {
+        jComboBox5.setSelectedItem(gui.getInfoPC().getLugar());
+        jComboBox4.setSelectedItem(gui.getInfoPC().getArea());
+        jComboBox1.setSelectedItem(gui.getInfoPC().getDistribucionOffice());
+        jComboBox11.setSelectedItem(gui.getInfoPC().getVersionOffice());
+        jComboBox2.setSelectedItem(gui.getInfoPC().getLicenciaOffice());
+        jComboBox6.setSelectedItem(gui.getInfoPC().getDistribucionWindows());
+        jComboBox3.setSelectedItem(gui.getInfoPC().getDistribucionProject());
+        jComboBox10.setSelectedItem(gui.getInfoPC().getVersionProject());
+        jComboBox7.setSelectedItem(gui.getInfoPC().getLicenciaProject());
+        jComboBox8.setSelectedItem(gui.getInfoPC().getDistribucionAutocad());
+        jComboBox12.setSelectedItem(gui.getInfoPC().getVersionAutocad());
+        jComboBox9.setSelectedItem(gui.getInfoPC().getLicenciaAutocad());
+    }
+
+    private void iniciarJComboBoxs() {
         configurarComboBox(jComboBox5, gui.getInfoPC().getLugaresOficina());
         configurarComboBox(jComboBox4, gui.getInfoPC().getAreasOficina());
         configurarComboBox(jComboBox1, gui.getInfoPC().getListaDistribucionOffice());
@@ -64,8 +78,8 @@ public class MenuInventario extends javax.swing.JPanel {
         configurarComboBox(jComboBox12, gui.getInfoPC().getListaVersionAutocad());
         configurarComboBox(jComboBox9, gui.getInfoPC().getListaLicenciasAutocad());
     }
-    
-    private void actualizarJTextFields(){
+
+    private void actualizarJTextFields() {
         jTextField1.setText(gui.getInfoPC().getPersonaAsignada());
         jTextField2.setText(gui.getInfoPC().getPlacaPC());
         jTextField6.setText(gui.getInfoPC().getNumeroFactura());
@@ -941,7 +955,7 @@ public class MenuInventario extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField6FocusLost
 
     private void jTextField3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField3FocusLost
-         gui.getInfoPC().setIdWindows(jTextField3.getText());
+        gui.getInfoPC().setIdWindows(jTextField3.getText());
     }//GEN-LAST:event_jTextField3FocusLost
 
     private void jTextField4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusLost

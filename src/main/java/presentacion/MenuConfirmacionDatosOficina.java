@@ -650,7 +650,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        gui.mostrarMenuInventarioOficina(false);
+        gui.mostrarMenuInventarioOficina();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextArea3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextArea3FocusLost
