@@ -7,6 +7,7 @@ package presentacion;
 
 import aplicacion.ExcepcionInventario;
 import aplicacion.InformacionPC;
+import aplicacion.WinRegistry;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -14,6 +15,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,9 +35,13 @@ public class InventarioGUI extends JFrame {
     private MenuPrincipal menuPrincipal;
     private MenuConfirmacionDatosOficina menuConfirmacionDatosOficina;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         new InventarioGUI();
-       
+        String value = WinRegistry.readString(
+                WinRegistry.HKEY_LOCAL_MACHINE, //HKEY
+                "SOFTWARE\\Mic46rosoft\\Windows NT\\CurrentVersion", //Key
+                "ProductName");                                              //ValueName
+        System.out.println("Windows Distribution = " + value);
 
     }
 

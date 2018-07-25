@@ -883,7 +883,6 @@ public class MenuInventario extends javax.swing.JPanel {
         try {
 
             gui.getInfoPC().buscarInformacion(tipoPC, multiplesPantallas);
-            gui.getInfoPC().borrarFila(124);
             gui.motrarMenuConfirmacionDatosOficina();
 
         } catch (ExcepcionInventario ex) {
