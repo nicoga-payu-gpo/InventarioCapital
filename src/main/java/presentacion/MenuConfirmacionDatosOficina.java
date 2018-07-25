@@ -43,11 +43,15 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField3.setText(gui.getInfoPC().getTarjetaGrafica());
         jTextField4.setText(gui.getInfoPC().getDiscoDuro());
         jTextArea1.setText(gui.getInfoPC().getRam());
-        jTextArea2.setText(gui.getInfoPC().getMarcaPantalla());
-        jTextArea3.setText(gui.getInfoPC().getModeloPantalla());
-        jTextArea4.setText(gui.getInfoPC().getSerialPantalla());
-        
-        
+        if (!jTextArea2.getText().trim().equals("")) {
+            jTextArea2.setText(gui.getInfoPC().getMarcaPantalla());
+        }
+        if (!jTextArea3.getText().trim().equals("")) {
+            jTextArea3.setText(gui.getInfoPC().getModeloPantalla());
+        }
+        if (!jTextArea3.getText().trim().equals("")) {
+            jTextArea3.setText(gui.getInfoPC().getSerialPantalla());
+        }
         if ((gui.getMenuInventarioOficina().getTipoPC() == InformacionPC.laptop || gui.getMenuInventarioOficina().getTipoPC() == InformacionPC.allInOne) && !gui.getMenuInventarioOficina().getMultiplesPantallas()) {
             jTextArea2.setEditable(false);
             jTextArea3.setEditable(false);
@@ -431,7 +435,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 326, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 449, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1)
                     .addComponent(jSeparator14, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -497,7 +501,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addGap(20, 20, 20)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel11)
@@ -521,7 +525,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
                             .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, 0)
-                        .addComponent(jSeparator11, javax.swing.GroupLayout.DEFAULT_SIZE, 11, Short.MAX_VALUE)
+                        .addComponent(jSeparator11, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
                         .addGap(0, 0, 0)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -550,9 +554,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
                             .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 0, 0)
-                                .addComponent(jLabel20)))
+                            .addComponent(jLabel20))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -600,7 +602,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
                         .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, 0)
                         .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton1))
@@ -627,25 +629,25 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 187, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(176, 176, 176))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(71, 71, 71))
-                    .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel2)
+                        .addGap(41, 41, 41))
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, Short.MAX_VALUE)))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -696,15 +698,15 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField8FocusLost
 
     private void jTextField5FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField5FocusLost
-         gui.getInfoPC().setGrupo(jTextField5.getText());
+        gui.getInfoPC().setGrupo(jTextField5.getText());
     }//GEN-LAST:event_jTextField5FocusLost
 
     private void jTextField6FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField6FocusLost
-       gui.getInfoPC().setDominio(jTextField6.getText());
+        gui.getInfoPC().setDominio(jTextField6.getText());
     }//GEN-LAST:event_jTextField6FocusLost
 
     private void jTextField11FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField11FocusLost
-       gui.getInfoPC().setIp(jTextField11.getText());
+        gui.getInfoPC().setIp(jTextField11.getText());
     }//GEN-LAST:event_jTextField11FocusLost
 
     private void jTextField10FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField10FocusLost
@@ -716,11 +718,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField2FocusLost
 
     private void jTextField12FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField12FocusLost
-       gui.getInfoPC().setUnidadCD(jTextField12.getText());
+        gui.getInfoPC().setUnidadCD(jTextField12.getText());
     }//GEN-LAST:event_jTextField12FocusLost
 
     private void jTextField3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField3FocusLost
-         gui.getInfoPC().setTarjetaGrafica(jTextField3.getText());
+        gui.getInfoPC().setTarjetaGrafica(jTextField3.getText());
     }//GEN-LAST:event_jTextField3FocusLost
 
     private void jTextField4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusLost
@@ -736,7 +738,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField13ActionPerformed
 
     private void jTextField13FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField13FocusLost
-         gui.getInfoPC().setModeloPC(jTextField13.getText());
+        gui.getInfoPC().setModeloPC(jTextField13.getText());
     }//GEN-LAST:event_jTextField13FocusLost
 
 

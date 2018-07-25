@@ -20,11 +20,16 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.CellData;
 import com.google.api.services.sheets.v4.model.CellFormat;
+import com.google.api.services.sheets.v4.model.DeleteDimensionRequest;
+import com.google.api.services.sheets.v4.model.DeleteRangeRequest;
+import com.google.api.services.sheets.v4.model.DimensionRange;
 import com.google.api.services.sheets.v4.model.ExtendedValue;
 import com.google.api.services.sheets.v4.model.GridCoordinate;
+import com.google.api.services.sheets.v4.model.GridRange;
 import com.google.api.services.sheets.v4.model.NumberFormat;
 import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.RowData;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.UpdateCellsRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
@@ -53,7 +58,7 @@ public class InformacionPC {
     private static final String APPLICATION_NAME = "inventario Capital";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String CREDENTIALS_FOLDER = "credentials"; // Directory to store user credentials
-    private final String spreadsheetId = "1RNKrOzttbIwK0gjnJRqc0aoQ7jGjC23SMoro1t0kZ-I";
+    private static final String spreadsheetId = "1RNKrOzttbIwK0gjnJRqc0aoQ7jGjC23SMoro1t0kZ-I";
     public static final int OFICINA = 0;
     public static final int OBRA = 1;
 
@@ -129,22 +134,20 @@ public class InformacionPC {
     private ArrayList<String> listaLicenciasAutocad = new ArrayList<String>();
     private ArrayList<String> seriales = new ArrayList<String>();
     private Sheets service;
-    private String[] abc = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N","O","P","Q","R","S","T","U","V","W","X",
-                            "Y","Z","AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS"};
+    private String[] abc = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
+        "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS"};
 
     String[] titulos = {"N FACTURA", "TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "AREA", "MARCA", "MODELO", "SERIAL", "PLACA",
         "USER ADMIN", "GPO", "USER DOM", "P.MARCA", "P.MODELO", "P.SERIAL", "IP", "PROCESADOR", "RAM", "MOTHERBOARD", "TJ GRAFICA", "DISCO DURO", "UNIDAD CD/DVD",
         "ANTIVIRUS", "DISTRIBUCION OFFICE", "VERSIÓN OFFICE", "LICENCIA OFFICE", "ACTIVO", "instalada", "DISTRUBUCION WINDOWS", "ID PRODUCTO", "LICENCIA WINDOWS", "LICENCIA (BIOS)",
         "COA", "DISTRIBUCION PROJECT", "VERSIÓN PROJECT", "LICENCIA PROJECT", "DISTRIBUCION AUTOCAD", "VERSIÓN AUTOCAD", "LICENCIA AUTOCAD", "LICENCIA OTRO"};
-    String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
-                serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
-                idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
-    
+
     public InformacionPC() {
         resetearCampos();
     }
 
     public void resetearCampos() {
+        tipoDeEquipo="DESKTOP";
         nombreAnteriorPC = "";
         nombrePC = "";
         numeroFactura = "";
@@ -299,11 +302,14 @@ public class InformacionPC {
     public void guardarDatosOficina() throws ExcepcionInventario {
         try {
             guardarFecha();
-            
+            String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
+                serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
+                idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
             for (int i = 0; i < titulos.length; i++) {
                 guardarDato(titulos[i], datosPC[i], filaTitulosInventarioOficina);
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new ExcepcionInventario("Error al intentar guardar datos en Google sheets: " + ex.getMessage());
         }
 
@@ -340,36 +346,36 @@ public class InformacionPC {
             int columnaInicial = buscarColumna("FECHA", filaTitulosInventarioOficina) + 1;
             int columnaFinal = buscarColumna("LICENCIA OTRO", filaTitulosInventarioOficina) + 1;
             ValueRange respuesta = service.spreadsheets().values()
-                    .get(spreadsheetId, "Oficina!" + abc[columnaInicial - 1] + (filaDocumento-1) + ":" + abc[columnaFinal] + (filaDocumento-1))
+                    .get(spreadsheetId, "Oficina!" + abc[columnaInicial - 1] + (filaDocumento + 1) + ":" + abc[columnaFinal] + (filaDocumento + 1))
                     .execute();
             List<List<Object>> datos = respuesta.getValues();
-            numeroFactura=(String)datos.get(0).get(buscarColumna("N FACTURA",filaTitulosInventarioOficina));
-            tipoDeEquipo=(String)datos.get(0).get(buscarColumna("TIPO EQUIPO",filaTitulosInventarioOficina));
-            personaAsignada=(String)datos.get(0).get(buscarColumna("ASIGNADO A",filaTitulosInventarioOficina));
-            lugar=(String)datos.get(0).get(buscarColumna("LUGAR",filaTitulosInventarioOficina));
-            area=(String)datos.get(0).get(buscarColumna("AREA",filaTitulosInventarioOficina));
-            placaPC=(String)datos.get(0).get(buscarColumna("PLACA",filaTitulosInventarioOficina));
-            antivirus=(String)datos.get(0).get(buscarColumna("ANTIVIRUS",filaTitulosInventarioOficina));
-            distribucionOffice=(String)datos.get(0).get(buscarColumna("DISTRIBUCION OFFICE",filaTitulosInventarioOficina));
-            versionOffice=(String)datos.get(0).get(buscarColumna("VERSIÓN OFFICE",filaTitulosInventarioOficina));
-            licenciaOffice=(String)datos.get(0).get(buscarColumna("LICENCIA OFFICE",filaTitulosInventarioOficina));
-            officeActivo=(String)datos.get(0).get(buscarColumna("ACTIVO",filaTitulosInventarioOficina));
-            officeInstalado=(String)datos.get(0).get(buscarColumna("instalada",filaTitulosInventarioOficina));
-            distribucionWindows=(String)datos.get(0).get(buscarColumna("DISTRUBUCION WINDOWS",filaTitulosInventarioOficina));
-            idWindows=(String)datos.get(0).get(buscarColumna("ID PRODUCTO",filaTitulosInventarioOficina));
-            licenciaWindows=(String)datos.get(0).get(buscarColumna("LICENCIA WINDOWS",filaTitulosInventarioOficina));
-            licenciaWindowsBIOS=(String)datos.get(0).get(buscarColumna("LICENCIA (BIOS)",filaTitulosInventarioOficina));
-            coaWindows=(String)datos.get(0).get(buscarColumna("COA",filaTitulosInventarioOficina));
-            distribucionProject=(String)datos.get(0).get(buscarColumna("DISTRIBUCION PROJECT",filaTitulosInventarioOficina));
-            versionProject=(String)datos.get(0).get(buscarColumna("VERSIÓN PROJECT",filaTitulosInventarioOficina));
-            licenciaProject=(String)datos.get(0).get(buscarColumna("LICENCIA PROJECT",filaTitulosInventarioOficina));
-            distribucionAutocad=(String)datos.get(0).get(buscarColumna("DISTRIBUCION AUTOCAD",filaTitulosInventarioOficina));
-            versionAutocad=(String)datos.get(0).get(buscarColumna("VERSIÓN AUTOCAD",filaTitulosInventarioOficina));
-            licenciaAutocad=(String)datos.get(0).get(buscarColumna("LICENCIA AUTOCAD",filaTitulosInventarioOficina));
-            licenciaOtro=(String)datos.get(0).get(buscarColumna("LICENCIA OTRO",filaTitulosInventarioOficina));
-            nombreAnteriorPC=(String)datos.get(0).get(buscarColumna("NOMBRE ACTUAL EQUIPO",filaTitulosInventarioOficina))+" - "+(String)datos.get(0).get(buscarColumna("ASIGNADO A",filaTitulosInventarioOficina));
+            numeroFactura = (String) datos.get(0).get(buscarColumna("N FACTURA", filaTitulosInventarioOficina));
+            tipoDeEquipo = (String) datos.get(0).get(buscarColumna("TIPO EQUIPO", filaTitulosInventarioOficina));
+            personaAsignada = (String) datos.get(0).get(buscarColumna("ASIGNADO A", filaTitulosInventarioOficina));
+            lugar = (String) datos.get(0).get(buscarColumna("LUGAR", filaTitulosInventarioOficina));
+            area = (String) datos.get(0).get(buscarColumna("AREA", filaTitulosInventarioOficina));
+            placaPC = (String) datos.get(0).get(buscarColumna("PLACA", filaTitulosInventarioOficina));
+            antivirus = (String) datos.get(0).get(buscarColumna("ANTIVIRUS", filaTitulosInventarioOficina));
+            distribucionOffice = (String) datos.get(0).get(buscarColumna("DISTRIBUCION OFFICE", filaTitulosInventarioOficina));
+            versionOffice = (String) datos.get(0).get(buscarColumna("VERSIÓN OFFICE", filaTitulosInventarioOficina));
+            licenciaOffice = (String) datos.get(0).get(buscarColumna("LICENCIA OFFICE", filaTitulosInventarioOficina));
+            officeActivo = (String) datos.get(0).get(buscarColumna("ACTIVO", filaTitulosInventarioOficina));
+            officeInstalado = (String) datos.get(0).get(buscarColumna("instalada", filaTitulosInventarioOficina));
+            distribucionWindows = (String) datos.get(0).get(buscarColumna("DISTRUBUCION WINDOWS", filaTitulosInventarioOficina));
+            idWindows = (String) datos.get(0).get(buscarColumna("ID PRODUCTO", filaTitulosInventarioOficina));
+            licenciaWindows = (String) datos.get(0).get(buscarColumna("LICENCIA WINDOWS", filaTitulosInventarioOficina));
+            licenciaWindowsBIOS = (String) datos.get(0).get(buscarColumna("LICENCIA (BIOS)", filaTitulosInventarioOficina));
+            coaWindows = (String) datos.get(0).get(buscarColumna("COA", filaTitulosInventarioOficina));
+            distribucionProject = (String) datos.get(0).get(buscarColumna("DISTRIBUCION PROJECT", filaTitulosInventarioOficina));
+            versionProject = (String) datos.get(0).get(buscarColumna("VERSIÓN PROJECT", filaTitulosInventarioOficina));
+            licenciaProject = (String) datos.get(0).get(buscarColumna("LICENCIA PROJECT", filaTitulosInventarioOficina));
+            distribucionAutocad = (String) datos.get(0).get(buscarColumna("DISTRIBUCION AUTOCAD", filaTitulosInventarioOficina));
+            versionAutocad = (String) datos.get(0).get(buscarColumna("VERSIÓN AUTOCAD", filaTitulosInventarioOficina));
+            licenciaAutocad = (String) datos.get(0).get(buscarColumna("LICENCIA AUTOCAD", filaTitulosInventarioOficina));
+            licenciaOtro = (String) datos.get(0).get(buscarColumna("LICENCIA OTRO", filaTitulosInventarioOficina));
+            nombreAnteriorPC = (String) datos.get(0).get(buscarColumna("NOMBRE ACTUAL EQUIPO", filaTitulosInventarioOficina)) + " - " + (String) datos.get(0).get(buscarColumna("ASIGNADO A", filaTitulosInventarioOficina));
         } catch (IOException ex) {
-            throw new ExcepcionInventario("Error al intentar obtener informacio anterior del PC "+ex.getMessage());
+            throw new ExcepcionInventario("Error al intentar obtener informacio anterior del PC " + ex.getMessage());
         }
 
     }
@@ -460,6 +466,43 @@ public class InformacionPC {
         service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
                 .execute();
         ;
+    }
+
+    public void borrarFila(Integer fila) {
+        Spreadsheet spreadsheet = null;
+        try {
+            spreadsheet = service.spreadsheets().get(spreadsheetId).execute();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        BatchUpdateSpreadsheetRequest content = new BatchUpdateSpreadsheetRequest();
+        Request request = new Request();
+        DeleteDimensionRequest deleteDimensionRequest = new DeleteDimensionRequest();
+        DimensionRange dimensionRange = new DimensionRange();
+        dimensionRange.setDimension("ROWS");
+        dimensionRange.setStartIndex(fila-1);
+        dimensionRange.setEndIndex(fila);
+
+        dimensionRange.setSheetId(1561897843);
+        deleteDimensionRequest.setRange(dimensionRange);
+
+        request.setDeleteDimension(deleteDimensionRequest);
+
+        List<Request> requests = new ArrayList<Request>();
+        requests.add(request);
+        content.setRequests(requests);
+
+        try {
+            service.spreadsheets().batchUpdate(spreadsheetId, content).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            dimensionRange = null;
+            deleteDimensionRequest = null;
+            request = null;
+            requests = null;
+            content = null;
+        }
     }
 
     public void buscarInformacion(int tipoPC, boolean multiplesPantallas) throws ExcepcionInventario {
@@ -805,6 +848,7 @@ public class InformacionPC {
     }
 
     public void setDistribucionProject(String distribucionProject) {
+        System.out.println(distribucionProject);
         this.distribucionProject = distribucionProject.toUpperCase();
     }
 
@@ -969,7 +1013,7 @@ public class InformacionPC {
     }
 
     public void setFilaDocumento(int filaDocumento) throws ExcepcionInventario {
-        this.filaDocumento = filaDocumento+1;
+        this.filaDocumento = filaDocumento - 1;
         obtenerInformacionAnteriorPC();
     }
 
@@ -1067,6 +1111,10 @@ public class InformacionPC {
 
     public String getLicenciaOtro() {
         return licenciaOtro;
+    }
+
+    public String getTipoDeEquipo() {
+        return tipoDeEquipo;
     }
 
 }
