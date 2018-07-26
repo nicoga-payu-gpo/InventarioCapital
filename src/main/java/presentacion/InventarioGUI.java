@@ -39,9 +39,24 @@ public class InventarioGUI extends JFrame {
         new InventarioGUI();
         String value = WinRegistry.readString(
                 WinRegistry.HKEY_LOCAL_MACHINE, //HKEY
-                "SOFTWARE\\Mic46rosoft\\Windows NT\\CurrentVersion", //Key
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", //Key
                 "ProductName");                                              //ValueName
         System.out.println("Windows Distribution = " + value);
+        String value1 = WinRegistry.readString(
+                WinRegistry.HKEY_LOCAL_MACHINE, //HKEY
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", //Key
+                "ProductID");                                              //ValueName
+        System.out.println("Windows calave = " + value1);
+        String value2 = WinRegistry.readString(
+                WinRegistry.HKEY_LOCAL_MACHINE, //HKEY
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", //Key
+                "DigitalProductId");                                              //ValueName
+        System.out.println("Windows calave = " + value2);
+        String value3 = WinRegistry.readString(
+                WinRegistry.HKEY_LOCAL_MACHINE, //HKEY
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", //Key
+                "ProductID");                                              //ValueName
+        System.out.println("Windows calave = " + value3);
 
     }
 
