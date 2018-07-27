@@ -85,6 +85,7 @@ public class InformacionPC {
     private String tipoDeEquipo;
     private String lugar;
     private String area;
+    private int tipoInventario;
     private String placaPC;
     private String marcaPC;
     private String modeloPC;
@@ -121,6 +122,7 @@ public class InformacionPC {
     private String licenciaAutocad;
     private String licenciaOtro;
     private ArrayList<String> lugaresOficina = new ArrayList<String>();
+    private ArrayList<String> lugaresObra = new ArrayList<String>();
     private ArrayList<String> areasOficina = new ArrayList<String>();
     private ArrayList<String> listaDistribucionOffice = new ArrayList<String>();
     private ArrayList<String> listaVersionOffice = new ArrayList<String>();
@@ -137,17 +139,21 @@ public class InformacionPC {
     private String[] abc = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
         "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS"};
 
-    String[] titulos = {"N FACTURA", "TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "AREA", "MARCA", "MODELO", "SERIAL", "PLACA",
+    String[] titulosOficina = {"N FACTURA", "TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "AREA", "MARCA", "MODELO", "SERIAL", "PLACA",
         "USER ADMIN", "GPO", "USER DOM", "P.MARCA", "P.MODELO", "P.SERIAL", "IP", "PROCESADOR", "RAM", "MOTHERBOARD", "TJ GRAFICA", "DISCO DURO", "UNIDAD CD/DVD",
         "ANTIVIRUS", "DISTRIBUCION OFFICE", "VERSIÓN OFFICE", "LICENCIA OFFICE", "ACTIVO", "instalada", "DISTRUBUCION WINDOWS", "ID PRODUCTO", "LICENCIA WINDOWS", "LICENCIA (BIOS)",
         "COA", "DISTRIBUCION PROJECT", "VERSIÓN PROJECT", "LICENCIA PROJECT", "DISTRIBUCION AUTOCAD", "VERSIÓN AUTOCAD", "LICENCIA AUTOCAD", "LICENCIA OTRO"};
+    String[] titulosObra = {"TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "MARCA", "MODELO", "SERIAL", "PLACA",
+        "USER ADMIN", "GPO", "USER DOM", "P.MARCA", "P.MODELO", "P.SERIAL", "IP", "PROCESADOR", "RAM", "MOTHERBOARD", "TJ GRAFICA", "DISCO DURO", "UNIDAD CD/DVD",
+        "ANTIVIRUS", "DISTRIBUCION OFFICE", "VERSION OFFICE", "LICENCIA OFFICE", "DISTRUBUCION WINDOWS", "ID PRODUCTO", "LICENCIA WINDOWS", "LICENCIA (BIOS)",
+        "COA"};
 
     public InformacionPC() {
         resetearCampos();
     }
 
     public void resetearCampos() {
-        tipoDeEquipo="DESKTOP";
+        tipoDeEquipo = "DESKTOP";
         nombreAnteriorPC = "";
         nombrePC = "";
         numeroFactura = "";
@@ -192,12 +198,7 @@ public class InformacionPC {
     public ArrayList<ArrayList<String>> buscarPCEnInventarioOficina() throws ExcepcionInventario {
         try {
             ArrayList<ArrayList<String>> computadoresConMismoSerial = new ArrayList<ArrayList<String>>();
-            String s = buscarSerialPC();
-            ValueRange respuesta;
-            respuesta = service.spreadsheets().values()
-                    .get(spreadsheetId, "Oficina!B5:C")
-                    .execute();
-            filaDocumento = respuesta.getValues().size() + 4;
+            String serial = buscarSerialPC();
             ValueRange respuesta1 = service.spreadsheets().values()
                     .get(spreadsheetId, "Oficina!B4:AW4")
                     .execute();
@@ -208,34 +209,69 @@ public class InformacionPC {
                     .execute();
             seriales = crearLista(respuesta2.getValues());
             for (int i = 0; i < seriales.size(); i++) {
-                if (seriales.get(i).trim().equals(s.trim())) {
+                System.out.println(seriales.get(i));
+                if (seriales.get(i).trim().equals(serial.trim())) {
                     computadoresConMismoSerial.add(new ArrayList<String>());
-                    computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add(Integer.toString(i + 3) + " - ");
-                    computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add(datosComputadorConMismoSerial(i + 3));
+                    computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add(Integer.toString(i + 3));
+                    computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add("OFICINA - " + datosComputadorConMismoSerial(i + 3, OFICINA));
                 }
             }
-            ArrayList<String> a = new ArrayList<String>();
-            a.add(Integer.toString(filaDocumento));
-            a.add("Agregar como nuevo computador.");
-            computadoresConMismoSerial.add(a);
 
-            return computadoresConMismoSerial;
+            return buscarPCEnInventarioObra(computadoresConMismoSerial, serial);
         } catch (IOException ex) {
-            throw new ExcepcionInventario("Error al intentar buscar PCs con el mismo rerial: " + ex.getMessage());
+            throw new ExcepcionInventario("Error al intentar buscar PCs con el mismo rerial en el inventario de oficina: " + ex.getMessage());
         }
     }
 
-    private String datosComputadorConMismoSerial(int fila) throws ExcepcionInventario {
-        String a = "";
+    public ArrayList<ArrayList<String>> buscarPCEnInventarioObra(ArrayList<ArrayList<String>> pcs, String serial) throws ExcepcionInventario {
         try {
-            int columnaInicial = buscarColumna("TIPO EQUIPO", filaTitulosInventarioOficina) + 1;
-            int columnaFinal = buscarColumna("ASIGNADO A", filaTitulosInventarioOficina) + 1;
+            ValueRange respuesta1 = service.spreadsheets().values()
+                    .get(spreadsheetId, "salas-obras!B4:AW4")
+                    .execute();
+            filaTitulosInventarioObra = respuesta1.getValues();      
+            int columna = buscarColumna("SERIAL", filaTitulosInventarioObra) + 1;
+            ValueRange respuesta2 = service.spreadsheets().values()
+                    .get(spreadsheetId, "salas-obras!" + abc[columna - 1] + ":" + abc[columna - 1])
+                    .execute();
+            seriales = crearLista(respuesta2.getValues());
+            for (int i = 0; i < seriales.size(); i++) {
+                if (seriales.get(i).trim().equals(serial.trim())) {
+                    pcs.add(new ArrayList<String>());
+                    pcs.get(pcs.size() - 1).add(Integer.toString(i + 3));
+                    pcs.get(pcs.size() - 1).add("OBRA - " + datosComputadorConMismoSerial(i + 3, OBRA));
+                }
+            }
+
+            return pcs;
+        } catch (IOException ex) {
+            throw new ExcepcionInventario("Error al intentar buscar PCs con el mismo rerial en el inventario de obra: " + ex.getMessage());
+        }
+    }
+
+    private String datosComputadorConMismoSerial(int fila, int ind) throws ExcepcionInventario {
+        String a = "";
+        String sheet;
+        List<List<Object>> filaTitulos;
+        if (ind == OBRA) {
+            filaTitulos = filaTitulosInventarioObra;
+            sheet = "salas-obras";
+        } else {
+            filaTitulos = filaTitulosInventarioOficina;
+            sheet = "Oficina";
+        }
+        try {
+            int columnaInicial = buscarColumna("TIPO EQUIPO", filaTitulos) + 1;
+            int columnaFinal = buscarColumna("ASIGNADO A", filaTitulos) + 1;
+            System.out.println(columnaInicial);
+            System.out.println(columnaFinal);
+            System.out.println(sheet + "!" + abc[columnaInicial - 1] + (fila) + ":" + abc[columnaFinal - 1] + (fila));
             ValueRange respuesta = service.spreadsheets().values()
-                    .get(spreadsheetId, "Oficina!" + abc[columnaInicial - 1] + (fila) + ":" + abc[columnaFinal - 1] + (fila))
+                    .get(spreadsheetId, sheet + "!" + abc[columnaInicial - 1] + (fila) + ":" + abc[columnaFinal - 1] + (fila))
                     .execute();
             List<List<Object>> datos = respuesta.getValues();
             int fila1 = 0;
             int columna1 = 0;
+            
             while (fila1 < datos.size()) {
                 while (columna1 < datos.get(fila1).size()) {
                     if (!datos.get(fila1).isEmpty() && !datos.get(fila1).get(columna1).toString().trim().equals("")) {
@@ -255,6 +291,7 @@ public class InformacionPC {
 
     public ArrayList<ArrayList<String>> definirTipoInventario(int ind) throws ExcepcionInventario {
         ArrayList<ArrayList<String>> computadoresConSerialesiguales = new ArrayList<ArrayList<String>>();
+        tipoInventario = ind;
         try {
 
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -265,12 +302,22 @@ public class InformacionPC {
                     .get(spreadsheetId, "Opciones Programa!A2:K2")
                     .execute();
             filaTitulosConfiguracion = respuesta.getValues();
-            if (ind == OFICINA) {
-                buscarDatosOficina();
-                computadoresConSerialesiguales = buscarPCEnInventarioOficina();
-            } else if (ind == OBRA) {
-
+            buscarDatosInventario();
+            if (tipoInventario == OFICINA) {
+                ValueRange respuesta1;
+                respuesta1 = service.spreadsheets().values().get(spreadsheetId, "Oficina!B5:C").execute();
+                filaDocumento = respuesta1.getValues().size() + 4;
+               
+            } else if (tipoInventario == OBRA) {
+                ValueRange respuesta2;
+                respuesta2 = service.spreadsheets().values().get(spreadsheetId, "salas-obras!B5:C").execute();
+                filaDocumento = respuesta2.getValues().size() + 4;
             }
+             computadoresConSerialesiguales = buscarPCEnInventarioOficina();
+            ArrayList<String> a = new ArrayList<String>();
+            a.add(Integer.toString(filaDocumento));
+            a.add("Agregar como nuevo computador.");
+            computadoresConSerialesiguales.add(a);
 
         } catch (IOException | GeneralSecurityException ex) {
             throw new ExcepcionInventario("Error al establecer conexion con google sheets");
@@ -299,15 +346,31 @@ public class InformacionPC {
         return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     }
 
-    public void guardarDatosOficina() throws ExcepcionInventario {
+    public void guardarDatos() throws ExcepcionInventario {
+
         try {
-            guardarFecha();
-            String[] datosPC = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
-                serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
-                idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
-            for (int i = 0; i < titulos.length; i++) {
-                guardarDato(titulos[i], datosPC[i], filaTitulosInventarioOficina);
+            if (tipoInventario == OBRA) {
+                
+                System.out.println(personaAsignada);
+                String[] datosPC = {tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
+                    serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, distribucionWindows,
+                    idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows};
+                guardarFecha();
+                
+                for (int i = 0; i < titulosObra.length; i++) {
+                    guardarDato(titulosObra[i], datosPC[i], filaTitulosInventarioObra);
+                }
+            } else {
+                String[] datosPC1 = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
+                    serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
+                    idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
+
+                guardarFecha();
+                for (int i = 0; i < titulosOficina.length; i++) {
+                    guardarDato(titulosOficina[i], datosPC1[i], filaTitulosInventarioOficina);
+                }
             }
+
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new ExcepcionInventario("Error al intentar guardar datos en Google sheets: " + ex.getMessage());
@@ -316,6 +379,12 @@ public class InformacionPC {
     }
 
     private void guardarFecha() throws IOException {
+        int sheetid;
+        if (tipoInventario == OBRA) {
+            sheetid = 1111344361;
+        } else {
+            sheetid = 1561897843;
+        }
         List<Request> requests = new ArrayList<>();
 
         List<CellData> valores = new ArrayList<>();
@@ -328,7 +397,7 @@ public class InformacionPC {
         requests.add(new Request()
                 .setUpdateCells(new UpdateCellsRequest()
                         .setStart(new GridCoordinate()
-                                .setSheetId(1561897843)
+                                .setSheetId(sheetid)
                                 .setRowIndex(filaDocumento)
                                 .setColumnIndex(1))
                         .setRows(Arrays.asList(
@@ -380,20 +449,28 @@ public class InformacionPC {
 
     }
 
-    private void buscarDatosOficina() throws ExcepcionInventario {
+    private void buscarDatosInventario() throws ExcepcionInventario {
         try {
-            lugaresOficina = obtenerColumna(buscarColumna("LUGARES OFICINA", filaTitulosConfiguracion));
-            areasOficina = obtenerColumna(buscarColumna("AREAS OFICINA", filaTitulosConfiguracion));
+            if (tipoInventario == OBRA) {
+                lugaresObra = obtenerColumna(buscarColumna("LUGARES OBRA", filaTitulosConfiguracion));
+
+            } else if (tipoInventario == OFICINA) {
+                lugaresOficina = obtenerColumna(buscarColumna("LUGARES OFICINA", filaTitulosConfiguracion));
+                areasOficina = obtenerColumna(buscarColumna("AREAS OFICINA", filaTitulosConfiguracion));
+                listaVersionProject = obtenerColumna(buscarColumna("VERSION PROJECT", filaTitulosConfiguracion));
+                listaDistribucionProject = obtenerColumna(buscarColumna("DISTRIBUCION PROJECT", filaTitulosConfiguracion));
+                listaLicenciasProject = obtenerLicencias("Project", "C");
+                listaDistribucionAutocad = obtenerColumna(buscarColumna("DISTRIBUCION AUTOCAD", filaTitulosConfiguracion));
+                listaVersionAutocad = obtenerColumna(buscarColumna("VERSION AUTOCAD", filaTitulosConfiguracion));
+                listaLicenciasAutocad = obtenerLicencias("AutoCad", "E");
+            }
+
             listaDistribucionOffice = obtenerColumna(buscarColumna("DISTRIBUCION OFFICE", filaTitulosConfiguracion));
             listaLicenciasOffice = obtenerLicencias("Office", "D");
+            listaLicenciasOffice.add(0, "SIN LICENCIA");
             listaVersionOffice = obtenerColumna(buscarColumna("VERSION OFFICE", filaTitulosConfiguracion));
             listaDistribucionWindows = obtenerColumna(buscarColumna("DISTRIBUCION WINDOWS", filaTitulosConfiguracion));
-            listaVersionProject = obtenerColumna(buscarColumna("VERSION PROJECT", filaTitulosConfiguracion));
-            listaDistribucionProject = obtenerColumna(buscarColumna("DISTRIBUCION PROJECT", filaTitulosConfiguracion));
-            listaLicenciasProject = obtenerLicencias("Project", "C");
-            listaDistribucionAutocad = obtenerColumna(buscarColumna("DISTRIBUCION AUTOCAD", filaTitulosConfiguracion));
-            listaVersionAutocad = obtenerColumna(buscarColumna("VERSION AUTOCAD", filaTitulosConfiguracion));
-            listaLicenciasAutocad = obtenerLicencias("AutoCad", "E");
+
         } catch (IOException ex) {
             throw new ExcepcionInventario("Error al buscar datos en el apartado Opciones Programa de google sheets.");
         }
@@ -448,6 +525,12 @@ public class InformacionPC {
         if (p.isEmpty() || p.trim().equals("")) {
             p = "N/A";
         }
+         int sheetid;
+        if (tipoInventario == OBRA) {
+            sheetid = 1111344361;
+        } else {
+            sheetid = 1561897843;
+        }
         valores.add(new CellData()
                 .setUserEnteredValue(new ExtendedValue()
                         .setStringValue(p)));
@@ -455,7 +538,7 @@ public class InformacionPC {
         requests.add(new Request()
                 .setUpdateCells(new UpdateCellsRequest()
                         .setStart(new GridCoordinate()
-                                .setSheetId(1561897843)
+                                .setSheetId(sheetid)
                                 .setRowIndex(filaDocumento)
                                 .setColumnIndex(buscarColumna(c, l)))
                         .setRows(Arrays.asList(
@@ -480,7 +563,7 @@ public class InformacionPC {
         DeleteDimensionRequest deleteDimensionRequest = new DeleteDimensionRequest();
         DimensionRange dimensionRange = new DimensionRange();
         dimensionRange.setDimension("ROWS");
-        dimensionRange.setStartIndex(fila-1);
+        dimensionRange.setStartIndex(fila - 1);
         dimensionRange.setEndIndex(fila);
 
         dimensionRange.setSheetId(1561897843);
@@ -519,12 +602,12 @@ public class InformacionPC {
         serialPC = buscarSerialPC().toUpperCase();
         userAdmin = buscarUsuarioPC().toUpperCase();
         Grupo = buscarGrupoDeTrabajoPC().toUpperCase();
-        if (Grupo.equals("N/A")){
+        if (Grupo.equals("N/A")) {
             Dominio = buscarDominioPC().toUpperCase();
-        }else{
-            Dominio="N/A";
+        } else {
+            Dominio = "N/A";
         }
-        
+
         if (tipoPC != 1 || multiplesPantallas) {
             for (String s : buscarMarcaPantallasPC()) {
                 if (marcaPantalla == null) {
@@ -566,7 +649,7 @@ public class InformacionPC {
 
     }
 
-    private ArrayList<String> ejecutarComandoWMIC(String[] c) throws ExcepcionInventario {
+    public ArrayList<String> ejecutarComandoWMIC(String[] c) throws ExcepcionInventario {
         BufferedReader reader = null;
         ArrayList<String> respuesta = new ArrayList<String>();
         try {
@@ -614,7 +697,7 @@ public class InformacionPC {
                 }
             }
         } catch (IOException | InterruptedException ex) {
-            throw new ExcepcionInventario("Error al ejecutar comando DirectX: "+ex.getMessage());
+            throw new ExcepcionInventario("Error al ejecutar comando DirectX: " + ex.getMessage());
         }
         return respuesta;
     }
@@ -1119,6 +1202,22 @@ public class InformacionPC {
 
     public String getTipoDeEquipo() {
         return tipoDeEquipo;
+    }
+
+    public int getTipoInventario() {
+        return tipoInventario;
+    }
+
+    public void setTipoInventario(int tipoInventario) {
+        this.tipoInventario = tipoInventario;
+    }
+
+    public ArrayList<String> getLugaresObra() {
+        return lugaresObra;
+    }
+
+    public void setLugaresObra(ArrayList<String> lugaresObra) {
+        this.lugaresObra = lugaresObra;
     }
 
 }

@@ -678,7 +678,7 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            gui.getInfoPC().guardarDatosOficina();
+            gui.getInfoPC().guardarDatos();
             JOptionPane.showMessageDialog(this, "Equipo agregado correctamente.");
             gui.mostrarMenuPrincipal();
         } catch (ExcepcionInventario ex) {

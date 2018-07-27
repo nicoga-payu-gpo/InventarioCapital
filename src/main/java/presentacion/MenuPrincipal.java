@@ -238,7 +238,28 @@ public class MenuPrincipal extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        try {
+            ArrayList<ArrayList<String>> opcionesDeActualizacion = gui.getInfoPC().definirTipoInventario(InformacionPC.OBRA);
+            if (opcionesDeActualizacion.size() > 1) {
+                ArrayList<String> listaSeleccion = new ArrayList<String>();
+                for (ArrayList<String> l : opcionesDeActualizacion) {
+                    listaSeleccion.add(l.get(1));
+                }
+                String rta = (String) JOptionPane.showInputDialog(null, "El serial de este computador ha sido encontrado en el inventario, si desea actualizar datos seleccionelo en la lista a continuacion:",
+                         "Serial encontrado en el inventario", JOptionPane.DEFAULT_OPTION, null, listaSeleccion.toArray(), listaSeleccion.get(0));
+                if  (!rta.equals("Agregar como nuevo computador.")) {
+                    for (ArrayList<String> l : opcionesDeActualizacion) {
+                        if (l.get(1).equals(rta)) {
+                            gui.getInfoPC().setFilaDocumento(Integer.parseInt(l.get(0)));
+                        }
+                    }
+                }
+            }
+
+            gui.mostrarMenuInventarioObra();
+        } catch (ExcepcionInventario ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
 

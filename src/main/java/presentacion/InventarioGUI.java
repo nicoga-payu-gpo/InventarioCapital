@@ -34,9 +34,12 @@ public class InventarioGUI extends JFrame {
     private MenuInventario menuInventarioOficina;
     private MenuPrincipal menuPrincipal;
     private MenuConfirmacionDatosOficina menuConfirmacionDatosOficina;
+    private MenuInventarioObra menuInventarioObra;
 
-    public static void main(String[] args) throws IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    public static void main(String[] args) throws IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ExcepcionInventario {
         new InventarioGUI();
+        
+        
         String value = WinRegistry.readString(
                 WinRegistry.HKEY_LOCAL_MACHINE, //HKEY
                 "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", //Key
@@ -60,13 +63,13 @@ public class InventarioGUI extends JFrame {
 
     }
 
-    public InventarioGUI() {
+    public InventarioGUI()  {
         prepareElementos();
         prepareAcciones();
         this.setVisible(true);
     }
 
-    private void prepareElementos() {
+    private void prepareElementos()  {
 
         infoPC = new InformacionPC();
         setTitle("Inventario Computadores Constructora Capital");
@@ -80,6 +83,9 @@ public class InventarioGUI extends JFrame {
         menuInventarioOficina = new MenuInventario(this);
         card.addLayoutComponent(menuInventarioOficina, "menuInventarioOficina");
         contenedor.add(menuInventarioOficina);
+        menuInventarioObra=new MenuInventarioObra(this);
+        card.addLayoutComponent(menuInventarioObra, "menuInventarioObra");
+        contenedor.add(menuInventarioObra);
         contenedor.setLayout(card);
         card.show(contenedor, "menuPrincipal");
         setSize(928, 680);
@@ -99,7 +105,6 @@ public class InventarioGUI extends JFrame {
             public void windowClosing(WindowEvent e) {
                 setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 salga();
-
             }
         }
         );
@@ -130,6 +135,13 @@ public class InventarioGUI extends JFrame {
         card.show(contenedor, "menuInventarioOficina");
         centrar();
 
+    }
+    
+     public void mostrarMenuInventarioObra() {
+        setSize(1000, 550);       
+        menuInventarioObra.actualizarCampos();
+        card.show(contenedor, "menuInventarioObra");
+        centrar();
     }
 
     public void motrarMenuConfirmacionDatosOficina() {
