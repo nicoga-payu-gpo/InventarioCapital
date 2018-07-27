@@ -519,7 +519,12 @@ public class InformacionPC {
         serialPC = buscarSerialPC().toUpperCase();
         userAdmin = buscarUsuarioPC().toUpperCase();
         Grupo = buscarGrupoDeTrabajoPC().toUpperCase();
-        Dominio = buscarDominioPC().toUpperCase();
+        if (Grupo.equals("N/A")){
+            Dominio = buscarDominioPC().toUpperCase();
+        }else{
+            Dominio="N/A";
+        }
+        
         if (tipoPC != 1 || multiplesPantallas) {
             for (String s : buscarMarcaPantallasPC()) {
                 if (marcaPantalla == null) {
@@ -609,7 +614,7 @@ public class InformacionPC {
                 }
             }
         } catch (IOException | InterruptedException ex) {
-            throw new ExcepcionInventario("Error al ejecutar comando DirectX.");
+            throw new ExcepcionInventario("Error al ejecutar comando DirectX: "+ex.getMessage());
         }
         return respuesta;
     }
@@ -848,7 +853,6 @@ public class InformacionPC {
     }
 
     public void setDistribucionProject(String distribucionProject) {
-        System.out.println(distribucionProject);
         this.distribucionProject = distribucionProject.toUpperCase();
     }
 
