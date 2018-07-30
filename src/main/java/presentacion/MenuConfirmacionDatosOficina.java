@@ -42,16 +42,14 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField13.setText(gui.getInfoPC().getModeloPC());
         jTextField3.setText(gui.getInfoPC().getTarjetaGrafica());
         jTextField4.setText(gui.getInfoPC().getDiscoDuro());
+        jTextArea1.setText(null);
+        jTextArea2.setText(null);
+        jTextArea3.setText(null);
+        jTextArea4.setText(null);
         jTextArea1.setText(gui.getInfoPC().getRam());
-        if (jTextArea2.getText().trim().equals("")) {
-            jTextArea2.setText(gui.getInfoPC().getMarcaPantalla());
-        }
-        if (jTextArea3.getText().trim().equals("")) {
-            jTextArea3.setText(gui.getInfoPC().getModeloPantalla());
-        }
-        if (jTextArea4.getText().trim().equals("")) {
-            jTextArea4.setText(gui.getInfoPC().getSerialPantalla());
-        }
+        jTextArea2.setText(gui.getInfoPC().getMarcaPantalla());
+        jTextArea3.setText(gui.getInfoPC().getModeloPantalla());
+        jTextArea4.setText(gui.getInfoPC().getSerialPantalla());
         if ((gui.getMenuInventarioOficina().getTipoPC() == InformacionPC.laptop || gui.getMenuInventarioOficina().getTipoPC() == InformacionPC.allInOne) && !gui.getMenuInventarioOficina().getMultiplesPantallas()) {
             jTextArea2.setEditable(false);
             jTextArea3.setEditable(false);
@@ -173,6 +171,11 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
         jTextField3.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jTextField3FocusLost(evt);
+            }
+        });
+        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField3ActionPerformed(evt);
             }
         });
 
@@ -735,16 +738,20 @@ public class MenuConfirmacionDatosOficina extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField4FocusLost
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
+        gui.getInfoPC().setPlacaBase(jTextField2.getText());
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jTextField13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField13ActionPerformed
-        // TODO add your handling code here:
+        gui.getInfoPC().setModeloPC(jTextField13.getText());
     }//GEN-LAST:event_jTextField13ActionPerformed
 
     private void jTextField13FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField13FocusLost
         gui.getInfoPC().setModeloPC(jTextField13.getText());
     }//GEN-LAST:event_jTextField13FocusLost
+
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+        gui.getInfoPC().setTarjetaGrafica(jTextField3.getText());
+    }//GEN-LAST:event_jTextField3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

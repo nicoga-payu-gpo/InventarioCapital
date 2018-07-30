@@ -121,6 +121,8 @@ public class InformacionPC {
     private String versionAutocad;
     private String licenciaAutocad;
     private String licenciaOtro;
+    private int filaActualizacion;
+    private int inventarioActualizacion;
     private ArrayList<String> lugaresOficina = new ArrayList<String>();
     private ArrayList<String> lugaresObra = new ArrayList<String>();
     private ArrayList<String> areasOficina = new ArrayList<String>();
@@ -145,7 +147,7 @@ public class InformacionPC {
         "COA", "DISTRIBUCION PROJECT", "VERSIÓN PROJECT", "LICENCIA PROJECT", "DISTRIBUCION AUTOCAD", "VERSIÓN AUTOCAD", "LICENCIA AUTOCAD", "LICENCIA OTRO"};
     String[] titulosObra = {"TIPO EQUIPO", "NOMBRE ANTERIOR", "NOMBRE ACTUAL EQUIPO", "ASIGNADO A", "LUGAR", "MARCA", "MODELO", "SERIAL", "PLACA",
         "USER ADMIN", "GPO", "USER DOM", "P.MARCA", "P.MODELO", "P.SERIAL", "IP", "PROCESADOR", "RAM", "MOTHERBOARD", "TJ GRAFICA", "DISCO DURO", "UNIDAD CD/DVD",
-        "ANTIVIRUS", "DISTRIBUCION OFFICE", "VERSION OFFICE", "LICENCIA OFFICE", "DISTRUBUCION WINDOWS", "ID PRODUCTO", "LICENCIA WINDOWS", "LICENCIA (BIOS)",
+        "ANTIVIRUS", "DISTRIBUCION OFFICE", "VERSIÓN OFFICE", "LICENCIA OFFICE", "DISTRUBUCION WINDOWS", "ID PRODUCTO", "LICENCIA WINDOWS", "LICENCIA (BIOS)",
         "COA"};
 
     public InformacionPC() {
@@ -209,7 +211,7 @@ public class InformacionPC {
                     .execute();
             seriales = crearLista(respuesta2.getValues());
             for (int i = 0; i < seriales.size(); i++) {
-                System.out.println(seriales.get(i));
+
                 if (seriales.get(i).trim().equals(serial.trim())) {
                     computadoresConMismoSerial.add(new ArrayList<String>());
                     computadoresConMismoSerial.get(computadoresConMismoSerial.size() - 1).add(Integer.toString(i + 3));
@@ -228,7 +230,7 @@ public class InformacionPC {
             ValueRange respuesta1 = service.spreadsheets().values()
                     .get(spreadsheetId, "salas-obras!B4:AW4")
                     .execute();
-            filaTitulosInventarioObra = respuesta1.getValues();      
+            filaTitulosInventarioObra = respuesta1.getValues();
             int columna = buscarColumna("SERIAL", filaTitulosInventarioObra) + 1;
             ValueRange respuesta2 = service.spreadsheets().values()
                     .get(spreadsheetId, "salas-obras!" + abc[columna - 1] + ":" + abc[columna - 1])
@@ -237,8 +239,8 @@ public class InformacionPC {
             for (int i = 0; i < seriales.size(); i++) {
                 if (seriales.get(i).trim().equals(serial.trim())) {
                     pcs.add(new ArrayList<String>());
-                    pcs.get(pcs.size() - 1).add(Integer.toString(i + 3));
-                    pcs.get(pcs.size() - 1).add("OBRA - " + datosComputadorConMismoSerial(i + 3, OBRA));
+                    pcs.get(pcs.size() - 1).add(Integer.toString(i + 4));
+                    pcs.get(pcs.size() - 1).add("OBRA - " + datosComputadorConMismoSerial(i + 4, OBRA));
                 }
             }
 
@@ -262,16 +264,13 @@ public class InformacionPC {
         try {
             int columnaInicial = buscarColumna("TIPO EQUIPO", filaTitulos) + 1;
             int columnaFinal = buscarColumna("ASIGNADO A", filaTitulos) + 1;
-            System.out.println(columnaInicial);
-            System.out.println(columnaFinal);
-            System.out.println(sheet + "!" + abc[columnaInicial - 1] + (fila) + ":" + abc[columnaFinal - 1] + (fila));
             ValueRange respuesta = service.spreadsheets().values()
                     .get(spreadsheetId, sheet + "!" + abc[columnaInicial - 1] + (fila) + ":" + abc[columnaFinal - 1] + (fila))
                     .execute();
             List<List<Object>> datos = respuesta.getValues();
             int fila1 = 0;
             int columna1 = 0;
-            
+
             while (fila1 < datos.size()) {
                 while (columna1 < datos.get(fila1).size()) {
                     if (!datos.get(fila1).isEmpty() && !datos.get(fila1).get(columna1).toString().trim().equals("")) {
@@ -307,13 +306,14 @@ public class InformacionPC {
                 ValueRange respuesta1;
                 respuesta1 = service.spreadsheets().values().get(spreadsheetId, "Oficina!B5:C").execute();
                 filaDocumento = respuesta1.getValues().size() + 4;
-               
+                System.out.println(filaDocumento);
+
             } else if (tipoInventario == OBRA) {
                 ValueRange respuesta2;
                 respuesta2 = service.spreadsheets().values().get(spreadsheetId, "salas-obras!B5:C").execute();
                 filaDocumento = respuesta2.getValues().size() + 4;
             }
-             computadoresConSerialesiguales = buscarPCEnInventarioOficina();
+            computadoresConSerialesiguales = buscarPCEnInventarioOficina();
             ArrayList<String> a = new ArrayList<String>();
             a.add(Integer.toString(filaDocumento));
             a.add("Agregar como nuevo computador.");
@@ -350,21 +350,31 @@ public class InformacionPC {
 
         try {
             if (tipoInventario == OBRA) {
-                
-                System.out.println(personaAsignada);
+
                 String[] datosPC = {tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
                     serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, distribucionWindows,
                     idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows};
-                guardarFecha();
-                
+                if(inventarioActualizacion==OBRA){
+                    filaDocumento=filaActualizacion;
+                }else{
+                    borrarFila(filaActualizacion+1,1561897843);
+                    filaDocumento=filaDocumento;
+                }
+                    guardarFecha();
+
                 for (int i = 0; i < titulosObra.length; i++) {
                     guardarDato(titulosObra[i], datosPC[i], filaTitulosInventarioObra);
                 }
-            } else {
+            } else if(tipoInventario == OFICINA){
                 String[] datosPC1 = {numeroFactura, tipoDeEquipo, nombreAnteriorPC, nombrePC, personaAsignada, lugar, area, marcaPC, modeloPC, serialPC, placaPC, userAdmin, Grupo, Dominio, marcaPantalla, modeloPantalla,
                     serialPantalla, ip, procesador, ram, placaBase, tarjetaGrafica, discoDuro, unidadCD, antivirus, distribucionOffice, versionOffice, licenciaOffice, officeActivo, officeInstalado, distribucionWindows,
                     idWindows, licenciaWindows, licenciaWindowsBIOS, coaWindows, distribucionProject, versionProject, licenciaProject, distribucionAutocad, versionAutocad, licenciaAutocad, licenciaOtro};
-
+                if(inventarioActualizacion==OFICINA){
+                    filaDocumento=filaActualizacion;
+                }else{
+                    borrarFila(filaActualizacion+1,1111344361);
+                    filaDocumento=filaDocumento;
+                }
                 guardarFecha();
                 for (int i = 0; i < titulosOficina.length; i++) {
                     guardarDato(titulosOficina[i], datosPC1[i], filaTitulosInventarioOficina);
@@ -412,37 +422,52 @@ public class InformacionPC {
 
     private void obtenerInformacionAnteriorPC() throws ExcepcionInventario {
         try {
-            int columnaInicial = buscarColumna("FECHA", filaTitulosInventarioOficina) + 1;
-            int columnaFinal = buscarColumna("LICENCIA OTRO", filaTitulosInventarioOficina) + 1;
-            ValueRange respuesta = service.spreadsheets().values()
-                    .get(spreadsheetId, "Oficina!" + abc[columnaInicial - 1] + (filaDocumento + 1) + ":" + abc[columnaFinal] + (filaDocumento + 1))
-                    .execute();
-            List<List<Object>> datos = respuesta.getValues();
-            numeroFactura = (String) datos.get(0).get(buscarColumna("N FACTURA", filaTitulosInventarioOficina));
-            tipoDeEquipo = (String) datos.get(0).get(buscarColumna("TIPO EQUIPO", filaTitulosInventarioOficina));
-            personaAsignada = (String) datos.get(0).get(buscarColumna("ASIGNADO A", filaTitulosInventarioOficina));
-            lugar = (String) datos.get(0).get(buscarColumna("LUGAR", filaTitulosInventarioOficina));
-            area = (String) datos.get(0).get(buscarColumna("AREA", filaTitulosInventarioOficina));
-            placaPC = (String) datos.get(0).get(buscarColumna("PLACA", filaTitulosInventarioOficina));
-            antivirus = (String) datos.get(0).get(buscarColumna("ANTIVIRUS", filaTitulosInventarioOficina));
-            distribucionOffice = (String) datos.get(0).get(buscarColumna("DISTRIBUCION OFFICE", filaTitulosInventarioOficina));
-            versionOffice = (String) datos.get(0).get(buscarColumna("VERSIÓN OFFICE", filaTitulosInventarioOficina));
-            licenciaOffice = (String) datos.get(0).get(buscarColumna("LICENCIA OFFICE", filaTitulosInventarioOficina));
-            officeActivo = (String) datos.get(0).get(buscarColumna("ACTIVO", filaTitulosInventarioOficina));
-            officeInstalado = (String) datos.get(0).get(buscarColumna("instalada", filaTitulosInventarioOficina));
-            distribucionWindows = (String) datos.get(0).get(buscarColumna("DISTRUBUCION WINDOWS", filaTitulosInventarioOficina));
-            idWindows = (String) datos.get(0).get(buscarColumna("ID PRODUCTO", filaTitulosInventarioOficina));
-            licenciaWindows = (String) datos.get(0).get(buscarColumna("LICENCIA WINDOWS", filaTitulosInventarioOficina));
-            licenciaWindowsBIOS = (String) datos.get(0).get(buscarColumna("LICENCIA (BIOS)", filaTitulosInventarioOficina));
-            coaWindows = (String) datos.get(0).get(buscarColumna("COA", filaTitulosInventarioOficina));
-            distribucionProject = (String) datos.get(0).get(buscarColumna("DISTRIBUCION PROJECT", filaTitulosInventarioOficina));
-            versionProject = (String) datos.get(0).get(buscarColumna("VERSIÓN PROJECT", filaTitulosInventarioOficina));
-            licenciaProject = (String) datos.get(0).get(buscarColumna("LICENCIA PROJECT", filaTitulosInventarioOficina));
-            distribucionAutocad = (String) datos.get(0).get(buscarColumna("DISTRIBUCION AUTOCAD", filaTitulosInventarioOficina));
-            versionAutocad = (String) datos.get(0).get(buscarColumna("VERSIÓN AUTOCAD", filaTitulosInventarioOficina));
-            licenciaAutocad = (String) datos.get(0).get(buscarColumna("LICENCIA AUTOCAD", filaTitulosInventarioOficina));
-            licenciaOtro = (String) datos.get(0).get(buscarColumna("LICENCIA OTRO", filaTitulosInventarioOficina));
-            nombreAnteriorPC = (String) datos.get(0).get(buscarColumna("NOMBRE ACTUAL EQUIPO", filaTitulosInventarioOficina)) + " - " + (String) datos.get(0).get(buscarColumna("ASIGNADO A", filaTitulosInventarioOficina));
+            int columnaInicial;
+            int columnaFinal;
+            List<List<Object>> datos=null;
+            List<List<Object>> filaTitulos=null;
+            if (inventarioActualizacion == OFICINA) {
+                filaTitulos = filaTitulosInventarioOficina;
+                columnaInicial = buscarColumna("FECHA", filaTitulos) + 1;
+                columnaFinal = buscarColumna("LICENCIA OTRO", filaTitulos) + 1;
+                ValueRange respuesta = service.spreadsheets().values()
+                        .get(spreadsheetId, "Oficina!" + abc[columnaInicial - 1] + (filaActualizacion + 1) + ":" + abc[columnaFinal] + (filaActualizacion + 1))
+                        .execute();
+                datos = respuesta.getValues();
+                numeroFactura = (String) datos.get(0).get(buscarColumna("N FACTURA", filaTitulos));
+                area = (String) datos.get(0).get(buscarColumna("AREA", filaTitulos));
+                officeActivo = (String) datos.get(0).get(buscarColumna("ACTIVO", filaTitulos));
+                officeInstalado = (String) datos.get(0).get(buscarColumna("instalada", filaTitulos));
+                distribucionProject = (String) datos.get(0).get(buscarColumna("DISTRIBUCION PROJECT", filaTitulos));
+                versionProject = (String) datos.get(0).get(buscarColumna("VERSIÓN PROJECT", filaTitulos));
+                licenciaProject = (String) datos.get(0).get(buscarColumna("LICENCIA PROJECT", filaTitulos));
+                distribucionAutocad = (String) datos.get(0).get(buscarColumna("DISTRIBUCION AUTOCAD", filaTitulos));
+                versionAutocad = (String) datos.get(0).get(buscarColumna("VERSIÓN AUTOCAD", filaTitulos));
+                licenciaAutocad = (String) datos.get(0).get(buscarColumna("LICENCIA AUTOCAD", filaTitulos));
+                licenciaOtro = (String) datos.get(0).get(buscarColumna("LICENCIA OTRO", filaTitulos));
+            }else if(inventarioActualizacion == OBRA){
+                filaTitulos = filaTitulosInventarioObra;
+                columnaInicial = buscarColumna("FECHA", filaTitulos) + 1;
+                columnaFinal = buscarColumna("COA", filaTitulos) + 1;
+                ValueRange respuesta = service.spreadsheets().values()
+                        .get(spreadsheetId, "salas-obras!" + abc[columnaInicial - 1] + (filaActualizacion + 1) + ":" + abc[columnaFinal] + (filaActualizacion + 1))
+                        .execute();
+                datos = respuesta.getValues();
+            }
+            tipoDeEquipo = (String) datos.get(0).get(buscarColumna("TIPO EQUIPO", filaTitulos));
+            personaAsignada = (String) datos.get(0).get(buscarColumna("ASIGNADO A", filaTitulos));
+            lugar = (String) datos.get(0).get(buscarColumna("LUGAR", filaTitulos));
+            placaPC = (String) datos.get(0).get(buscarColumna("PLACA", filaTitulos));
+            antivirus = (String) datos.get(0).get(buscarColumna("ANTIVIRUS", filaTitulos));
+            distribucionOffice = (String) datos.get(0).get(buscarColumna("DISTRIBUCION OFFICE", filaTitulos));
+            versionOffice = (String) datos.get(0).get(buscarColumna("VERSIÓN OFFICE", filaTitulos));
+            licenciaOffice = (String) datos.get(0).get(buscarColumna("LICENCIA OFFICE", filaTitulos));
+            distribucionWindows = (String) datos.get(0).get(buscarColumna("DISTRUBUCION WINDOWS", filaTitulos));
+            idWindows = (String) datos.get(0).get(buscarColumna("ID PRODUCTO", filaTitulos));
+            licenciaWindows = (String) datos.get(0).get(buscarColumna("LICENCIA WINDOWS", filaTitulos));
+            licenciaWindowsBIOS = (String) datos.get(0).get(buscarColumna("LICENCIA (BIOS)", filaTitulos));
+            coaWindows = (String) datos.get(0).get(buscarColumna("COA", filaTitulos));
+            nombreAnteriorPC = (String) datos.get(0).get(buscarColumna("NOMBRE ACTUAL EQUIPO", filaTitulos)) + " - " + (String) datos.get(0).get(buscarColumna("ASIGNADO A", filaTitulos));
         } catch (IOException ex) {
             throw new ExcepcionInventario("Error al intentar obtener informacio anterior del PC " + ex.getMessage());
         }
@@ -525,7 +550,7 @@ public class InformacionPC {
         if (p.isEmpty() || p.trim().equals("")) {
             p = "N/A";
         }
-         int sheetid;
+        int sheetid;
         if (tipoInventario == OBRA) {
             sheetid = 1111344361;
         } else {
@@ -534,24 +559,26 @@ public class InformacionPC {
         valores.add(new CellData()
                 .setUserEnteredValue(new ExtendedValue()
                         .setStringValue(p)));
-
-        requests.add(new Request()
-                .setUpdateCells(new UpdateCellsRequest()
-                        .setStart(new GridCoordinate()
-                                .setSheetId(sheetid)
-                                .setRowIndex(filaDocumento)
-                                .setColumnIndex(buscarColumna(c, l)))
-                        .setRows(Arrays.asList(
-                                new RowData().setValues(valores)))
-                        .setFields("userEnteredValue,userEnteredFormat.backgroundColor")));
-        BatchUpdateSpreadsheetRequest batchUpdateRequest = new BatchUpdateSpreadsheetRequest()
-                .setRequests(requests);
-        service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
-                .execute();
-        ;
+        int col = buscarColumna(c, l);
+        if (col != 0) {
+            requests.add(new Request()
+                    .setUpdateCells(new UpdateCellsRequest()
+                            .setStart(new GridCoordinate()
+                                    .setSheetId(sheetid)
+                                    .setRowIndex(filaDocumento)
+                                    .setColumnIndex(col))
+                            .setRows(Arrays.asList(
+                                    new RowData().setValues(valores)))
+                            .setFields("userEnteredValue,userEnteredFormat.backgroundColor")));
+            BatchUpdateSpreadsheetRequest batchUpdateRequest = new BatchUpdateSpreadsheetRequest()
+                    .setRequests(requests);
+            service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest)
+                    .execute();
+            ;
+        }
     }
 
-    public void borrarFila(Integer fila) {
+    public void borrarFila(Integer fila,int codHoja) {
         Spreadsheet spreadsheet = null;
         try {
             spreadsheet = service.spreadsheets().get(spreadsheetId).execute();
@@ -566,7 +593,7 @@ public class InformacionPC {
         dimensionRange.setStartIndex(fila - 1);
         dimensionRange.setEndIndex(fila);
 
-        dimensionRange.setSheetId(1561897843);
+        dimensionRange.setSheetId(codHoja);
         deleteDimensionRequest.setRange(dimensionRange);
 
         request.setDeleteDimension(deleteDimensionRequest);
@@ -767,6 +794,21 @@ public class InformacionPC {
 
     private String buscarProcesadorPC() throws ExcepcionInventario {
         return ejecutarComandoDirectX("Processor: ", true).get(0);
+    }
+
+    public void definirTipoActualizacion(String inventario, int fila) throws ExcepcionInventario {
+        if(inventario.equals("NUEVO")&& fila==0){
+            filaActualizacion=filaDocumento;
+            System.out.println(filaActualizacion+" definirTipoActualizacion");
+        }else{
+            filaActualizacion = fila-1;
+            if (inventario.equals("OFICINA")) {
+            inventarioActualizacion = OFICINA;
+        } else if (inventario.equals("OBRA")) {
+            inventarioActualizacion = OBRA;
+        }
+        obtenerInformacionAnteriorPC();
+        }        
     }
 
     private String buscarMemoriaRamPC() throws ExcepcionInventario {
@@ -1100,8 +1142,7 @@ public class InformacionPC {
     }
 
     public void setFilaDocumento(int filaDocumento) throws ExcepcionInventario {
-        this.filaDocumento = filaDocumento - 1;
-        obtenerInformacionAnteriorPC();
+        this.filaDocumento = filaDocumento;
     }
 
     public String getNombreAnteriorPC() {

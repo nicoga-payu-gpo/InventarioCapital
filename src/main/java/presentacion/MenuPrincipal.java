@@ -221,12 +221,14 @@ public class MenuPrincipal extends javax.swing.JPanel {
                 }
                 String rta = (String) JOptionPane.showInputDialog(null, "El serial de este computador ha sido encontrado en el inventario, si desea actualizar datos seleccionelo en la lista a continuacion:",
                          "Serial encontrado en el inventario", JOptionPane.DEFAULT_OPTION, null, listaSeleccion.toArray(), listaSeleccion.get(0));
-                if  (!rta.equals("Agregar como nuevo computador.")) {
+                if  (!rta.trim().equals("Agregar como nuevo computador.")) {
                     for (ArrayList<String> l : opcionesDeActualizacion) {
                         if (l.get(1).equals(rta)) {
-                            gui.getInfoPC().setFilaDocumento(Integer.parseInt(l.get(0).substring(0,l.get(0).length()-3)));
+                           gui.getInfoPC().definirTipoActualizacion(l.get(1).split("-")[0].trim(),Integer.parseInt(l.get(0)));
                         }
                     }
+                }else{
+                    gui.getInfoPC().definirTipoActualizacion("NUEVO",0);     
                 }
             }
 
@@ -245,14 +247,17 @@ public class MenuPrincipal extends javax.swing.JPanel {
                 for (ArrayList<String> l : opcionesDeActualizacion) {
                     listaSeleccion.add(l.get(1));
                 }
+                
                 String rta = (String) JOptionPane.showInputDialog(null, "El serial de este computador ha sido encontrado en el inventario, si desea actualizar datos seleccionelo en la lista a continuacion:",
                          "Serial encontrado en el inventario", JOptionPane.DEFAULT_OPTION, null, listaSeleccion.toArray(), listaSeleccion.get(0));
                 if  (!rta.equals("Agregar como nuevo computador.")) {
                     for (ArrayList<String> l : opcionesDeActualizacion) {
                         if (l.get(1).equals(rta)) {
-                            gui.getInfoPC().setFilaDocumento(Integer.parseInt(l.get(0)));
+                            gui.getInfoPC().definirTipoActualizacion(l.get(1).split("-")[0].trim(),Integer.parseInt(l.get(0)));
                         }
                     }
+                }else{
+                    gui.getInfoPC().definirTipoActualizacion("NUEVO",0);
                 }
             }
 

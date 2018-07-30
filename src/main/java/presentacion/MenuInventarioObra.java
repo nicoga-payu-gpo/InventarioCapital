@@ -770,7 +770,7 @@ public class MenuInventarioObra extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField8FocusLost
 
     private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
-        // TODO add your handling code here:
+        gui.getInfoPC().setAntivirus(jTextField7.getText());
     }//GEN-LAST:event_jTextField7ActionPerformed
 
     public int getTipoPC() {

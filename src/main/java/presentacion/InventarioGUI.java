@@ -14,7 +14,9 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -37,9 +39,7 @@ public class InventarioGUI extends JFrame {
     private MenuInventarioObra menuInventarioObra;
 
     public static void main(String[] args) throws IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, ExcepcionInventario {
-        new InventarioGUI();
-        
-        
+        new InventarioGUI();     
         String value = WinRegistry.readString(
                 WinRegistry.HKEY_LOCAL_MACHINE, //HKEY
                 "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", //Key
@@ -63,13 +63,13 @@ public class InventarioGUI extends JFrame {
 
     }
 
-    public InventarioGUI()  {
+    public InventarioGUI() {
         prepareElementos();
         prepareAcciones();
         this.setVisible(true);
     }
 
-    private void prepareElementos()  {
+    private void prepareElementos() {
 
         infoPC = new InformacionPC();
         setTitle("Inventario Computadores Constructora Capital");
@@ -83,7 +83,7 @@ public class InventarioGUI extends JFrame {
         menuInventarioOficina = new MenuInventario(this);
         card.addLayoutComponent(menuInventarioOficina, "menuInventarioOficina");
         contenedor.add(menuInventarioOficina);
-        menuInventarioObra=new MenuInventarioObra(this);
+        menuInventarioObra = new MenuInventarioObra(this);
         card.addLayoutComponent(menuInventarioObra, "menuInventarioObra");
         contenedor.add(menuInventarioObra);
         contenedor.setLayout(card);
@@ -136,9 +136,9 @@ public class InventarioGUI extends JFrame {
         centrar();
 
     }
-    
-     public void mostrarMenuInventarioObra() {
-        setSize(1000, 550);       
+
+    public void mostrarMenuInventarioObra() {
+        setSize(1000, 550);
         menuInventarioObra.actualizarCampos();
         card.show(contenedor, "menuInventarioObra");
         centrar();
